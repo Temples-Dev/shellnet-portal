@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+require __DIR__.'/portal.php';
+
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('dashboard')
