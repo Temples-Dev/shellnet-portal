@@ -1,3 +1,3 @@
-<x-layouts.app>
+<x-layouts::app>
     <livewire:services.bandwidth />
-</x-layouts.app>
+</x-layouts::app>

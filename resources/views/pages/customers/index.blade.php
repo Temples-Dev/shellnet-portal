@@ -1,3 +1,3 @@
-<x-layouts.app :title="__('Customers')">
+<x-layouts::app :title="__('Customers')">
     <livewire:customers.index />
-</x-layouts.app>
+</x-layouts::app>

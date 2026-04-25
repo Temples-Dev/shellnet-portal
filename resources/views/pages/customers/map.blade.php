@@ -1,3 +1,3 @@
-<x-layouts.app>
+<x-layouts::app>
     <livewire:customers.map />
-</x-layouts.app>
+</x-layouts::app>

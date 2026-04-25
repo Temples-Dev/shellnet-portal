@@ -1,3 +1,3 @@
-<x-layouts.app>
+<x-layouts::app>
     <livewire:billing.gateways />
-</x-layouts.app>
+</x-layouts::app>

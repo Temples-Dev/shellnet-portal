@@ -1,3 +1,3 @@
-<x-layouts.app>
+<x-layouts::app>
     <livewire:billing.coupons />
-</x-layouts.app>
+</x-layouts::app>

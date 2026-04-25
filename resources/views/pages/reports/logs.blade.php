@@ -1,3 +1,3 @@
-<x-layouts.app>
+<x-layouts::app>
     <livewire:reports.logs />
-</x-layouts.app>
+</x-layouts::app>
