@@ -37,7 +37,7 @@ class Dashboard extends Component
         return Router::enabled()->where('status', 'Offline')->count();
     }
 
-    #[Computed(cache: true, seconds: 60)]
+    #[Computed]
     public function recentTransactions(): \Illuminate\Database\Eloquent\Collection
     {
         return Transaction::with('customer')
@@ -64,7 +64,7 @@ class Dashboard extends Component
         ];
     }
 
-    #[Computed(cache: true, seconds: 60)]
+    #[Computed]
     public function planDistribution(): array
     {
         $counts = Subscription::active()
