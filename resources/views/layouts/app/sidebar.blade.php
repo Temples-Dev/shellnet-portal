@@ -11,23 +11,81 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Dashboard') }}
+                </flux:sidebar.item>
+
+                <flux:sidebar.group :heading="__('Customers')" class="grid">
+                    <flux:sidebar.item icon="users" :href="route('customers.index')" :current="request()->routeIs('customers.*')" wire:navigate>
+                        {{ __('All Customers') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="map-pin" :href="route('customers.map')" :current="request()->routeIs('customers.map')" wire:navigate>
+                        {{ __('Map') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
-            </flux:sidebar.nav>
 
-            <flux:spacer />
+                <flux:sidebar.group :heading="__('Billing')" class="grid">
+                    <flux:sidebar.item icon="receipt-text" :href="route('billing.transactions')" :current="request()->routeIs('billing.transactions*')" wire:navigate>
+                        {{ __('Transactions') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="ticket" :href="route('billing.vouchers')" :current="request()->routeIs('billing.vouchers*')" wire:navigate>
+                        {{ __('Vouchers') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="tag" :href="route('billing.coupons')" :current="request()->routeIs('billing.coupons*')" wire:navigate>
+                        {{ __('Coupons') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="credit-card" :href="route('billing.gateways')" :current="request()->routeIs('billing.gateways*')" wire:navigate>
+                        {{ __('Payment Gateways') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
+                <flux:sidebar.group :heading="__('Services')" class="grid">
+                    <flux:sidebar.item icon="wifi" :href="route('services.plans')" :current="request()->routeIs('services.plans*')" wire:navigate>
+                        {{ __('Plans') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="gauge" :href="route('services.bandwidth')" :current="request()->routeIs('services.bandwidth*')" wire:navigate>
+                        {{ __('Bandwidth') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
 
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
+                <flux:sidebar.group :heading="__('Network')" class="grid">
+                    <flux:sidebar.item icon="router" :href="route('network.routers')" :current="request()->routeIs('network.routers*')" wire:navigate>
+                        {{ __('Routers') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="circle-dot" :href="route('network.pools')" :current="request()->routeIs('network.pools*')" wire:navigate>
+                        {{ __('IP Pools') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="server" :href="route('network.radius')" :current="request()->routeIs('network.radius*')" wire:navigate>
+                        {{ __('RADIUS') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="cable" :href="route('network.odp')" :current="request()->routeIs('network.odp*')" wire:navigate>
+                        {{ __('ODPs') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Reports')" class="grid">
+                    <flux:sidebar.item icon="chart-bar" :href="route('reports.overview')" :current="request()->routeIs('reports.overview*')" wire:navigate>
+                        {{ __('Overview') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="arrow-down-tray" :href="route('reports.export')" :current="request()->routeIs('reports.export*')" wire:navigate>
+                        {{ __('Export') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="list-bullet" :href="route('reports.logs')" :current="request()->routeIs('reports.logs*')" wire:navigate>
+                        {{ __('Logs') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Admin')" class="grid">
+                    <flux:sidebar.item icon="shield-check" :href="route('admin.staff')" :current="request()->routeIs('admin.staff*')" wire:navigate>
+                        {{ __('Staff') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="message-square-text" :href="route('admin.messages')" :current="request()->routeIs('admin.messages*')" wire:navigate>
+                        {{ __('Messages') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="cog-6-tooth" :href="route('settings.general')" :current="request()->routeIs('settings.*')" wire:navigate>
+                        {{ __('Settings') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
