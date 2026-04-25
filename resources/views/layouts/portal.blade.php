@@ -3,38 +3,36 @@
 <head>
     @include('partials.head')
 </head>
-<body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
-    <div class="flex min-h-screen flex-col">
-        <header class="border-b border-zinc-800 bg-zinc-900">
-            <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                <a href="{{ route('portal.index') }}" class="flex items-center gap-2">
-                    <x-app-logo />
-                    <span class="font-semibold text-white">{{ config('app.name') }}</span>
-                </a>
-                <div class="flex items-center gap-2">
-                    @auth('customer')
-                        <a href="{{ route('portal.account') }}" class="text-sm text-zinc-400 hover:text-white">My Account</a>
-                        <form method="POST" action="{{ route('portal.logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-sm text-zinc-400 hover:text-white">Sign Out</button>
-                        </form>
-                    @else
-                        <a href="{{ route('portal.login') }}" class="text-sm text-zinc-400 hover:text-white">Sign In</a>
-                    @endauth
-                </div>
-            </div>
-        </header>
+<body class="min-h-screen bg-zinc-950 antialiased">
 
-        <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
-            {{ $slot }}
-        </main>
+    <header class="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
+        <div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
+            <a href="{{ route('portal.index') }}">
+                <x-app-logo />
+            </a>
+            <nav class="flex items-center gap-1">
+                @auth('customer')
+                    <a href="{{ route('portal.index') }}" class="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors">Plans</a>
+                    <a href="{{ route('portal.account') }}" class="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors">My Account</a>
+                    <form method="POST" action="{{ route('portal.logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors">Sign Out</button>
+                    </form>
+                @else
+                    <a href="{{ route('portal.login') }}" class="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors">Sign In</a>
+                @endauth
+            </nav>
+        </div>
+    </header>
 
-        <footer class="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">
-            &copy; {{ date('Y') }} {{ config('app.name') }} &middot; Powered by ShellNet
-        </footer>
-    </div>
+    <main class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
+        {{ $slot }}
+    </main>
 
-    @livewireScripts
+    <footer class="mt-8 border-t border-zinc-800/60 py-5">
+        <p class="text-center text-xs text-zinc-600">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+    </footer>
+
     @fluxScripts
 </body>
 </html>

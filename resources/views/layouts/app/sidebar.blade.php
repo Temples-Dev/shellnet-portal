@@ -34,9 +34,6 @@
                     <flux:sidebar.item icon="tag" :href="route('billing.coupons')" :current="request()->routeIs('billing.coupons*')" wire:navigate>
                         {{ __('Coupons') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="credit-card" :href="route('billing.gateways')" :current="request()->routeIs('billing.gateways*')" wire:navigate>
-                        {{ __('Payment Gateways') }}
-                    </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Services')" class="grid">

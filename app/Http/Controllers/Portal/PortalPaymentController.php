@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Portal;
 
+use App\Actions\Subscriptions\AssignSubscription;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\PaymentTransaction;
 use App\Models\Plan;
 use App\Services\Paystack\PaystackService;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +16,10 @@ use Illuminate\Support\Str;
 
 class PortalPaymentController extends Controller
 {
-    public function __construct(private readonly PaystackService $paystack) {}
+    public function __construct(
+        private readonly PaystackService   $paystack,
+        private readonly AssignSubscription $assignSubscription,
+    ) {}
 
     public function pay(Request $request, Plan $plan): RedirectResponse
     {
@@ -35,7 +40,11 @@ class PortalPaymentController extends Controller
                 route('portal.payment.callback'),
             );
 
-            session(['portal_pending_plan' => $plan->id, 'portal_customer_id' => $customer->id]);
+            session([
+                'portal_pending_plan'     => $plan->id,
+                'portal_customer_id'      => $customer->id,
+                'portal_payment_reference' => $result['reference'],
+            ]);
 
             return redirect()->away($result['authorization_url']);
         } catch (\Throwable $e) {
@@ -53,13 +62,58 @@ class PortalPaymentController extends Controller
         }
 
         try {
-            $this->paystack->verifyTransaction($reference);
+            $data = $this->paystack->verifyTransaction($reference);
+
+            // Idempotency — skip if webhook already processed this
+            $alreadyProcessed = PaymentTransaction::where('reference', $reference)
+                ->where('status', PaymentTransaction::STATUS_PAID)
+                ->exists();
+
+            if (! $alreadyProcessed) {
+                $this->processPayment($reference, $data);
+            }
+
             session()->flash('portal_success', true);
             return redirect()->route('portal.success');
         } catch (\Throwable $e) {
-            Log::warning('[PortalPayment] Callback verify failed', ['reference' => $reference, 'error' => $e->getMessage()]);
-            return redirect()->route('portal.index')->withErrors(['payment' => 'Payment could not be verified: ' . $e->getMessage()]);
+            Log::warning('[PortalPayment] Callback failed', ['reference' => $reference, 'error' => $e->getMessage()]);
+            return redirect()->route('portal.index')->withErrors(['payment' => 'Payment could not be verified. Please contact support.']);
         }
+    }
+
+    private function processPayment(string $reference, array $data): void
+    {
+        $meta       = $data['metadata'] ?? [];
+        $customerId = $meta['customer_id'] ?? session('portal_customer_id');
+        $planId     = $meta['plan_id'] ?? session('portal_pending_plan');
+
+        $customer = Customer::find($customerId);
+        $plan     = Plan::find($planId);
+
+        if (! $customer || ! $plan) {
+            Log::error('[PortalPayment] Customer or plan not found in callback', compact('customerId', 'planId'));
+            return;
+        }
+
+        $subscription = $this->assignSubscription->execute($customer, $plan, 'paystack');
+
+        PaymentTransaction::updateOrCreate(
+            ['reference' => $reference],
+            [
+                'customer_id'    => $customer->id,
+                'username'       => $customer->username,
+                'plan_id'        => $plan->id,
+                'plan_name'      => $plan->name,
+                'invoice'        => $subscription->transactions()->latest()->first()?->invoice,
+                'price'          => ($data['amount'] ?? 0) / 100,
+                'currency'       => $data['currency'] ?? 'GHS',
+                'gateway'        => 'paystack',
+                'payment_method' => 'paystack',
+                'status'         => PaymentTransaction::STATUS_PAID,
+                'gateway_trx_id' => (string) ($data['id'] ?? ''),
+                'paid_at'        => now(),
+            ]
+        );
     }
 
     private function findOrCreateCustomer(array $data): Customer
@@ -71,20 +125,27 @@ class PortalPaymentController extends Controller
         }
 
         $username = 'c' . preg_replace('/\D/', '', $data['phone']);
-        $password = Str::random(8);
+        $password = strtoupper(Str::random(4)) . rand(10, 99);
 
         $customer = Customer::create([
-            'fullname'     => $data['fullname'],
-            'username'     => $username,
-            'phone'        => $data['phone'],
-            'email'        => $data['email'] ?? null,
-            'password'     => Hash::make($password),
-            'status'       => 'Active',
-            'service_type' => 'Hotspot',
-            'account_type' => 'Personal',
+            'fullname'       => $data['fullname'],
+            'username'       => $username,
+            'phone'          => $data['phone'],
+            'email'          => $data['email'] ?? null,
+            'password'       => Hash::make($password),
+            'pppoe_password' => $password,
+            'status'         => 'Active',
+            'service_type'   => 'Hotspot',
+            'account_type'   => 'Personal',
         ]);
 
-        session(['portal_new_password' => $password, 'portal_username' => $username]);
+        session([
+            'portal_new_credentials' => [
+                'username' => $username,
+                'password' => $password,
+                'phone'    => $data['phone'],
+            ],
+        ]);
 
         return $customer;
     }

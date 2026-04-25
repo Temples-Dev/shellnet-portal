@@ -14,7 +14,7 @@ class Customer extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected string $rememberTokenName = 'login_token';
+    protected $rememberTokenName = 'login_token';
 
     // -------------------------------------------------------------------------
     // Enum-style constants

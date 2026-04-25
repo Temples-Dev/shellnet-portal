@@ -36,9 +36,13 @@ class PaystackService
     ): array {
         $reference ??= 'PS-' . strtoupper(Str::random(12));
 
+        $email = $customer->email
+            ?? preg_replace('/\D/', '', $customer->phone ?? '') . '@customers.shellnet.app';
+
         $response = $this->post('/transaction/initialize', [
-            'email'        => $customer->email ?? ($customer->username . '@shellnet.local'),
-            'amount'       => (int) round($plan->price * 100), // Paystack uses kobo/cents
+            'email'        => $email,
+            'amount'       => (int) round($plan->price * 100),
+            'currency'     => config('services.paystack.currency', 'GHS'),
             'reference'    => $reference,
             'callback_url' => $callbackUrl,
             'metadata'     => [

@@ -37,7 +37,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/transactions', 'pages.billing.transactions')->name('transactions');
         Route::view('/vouchers', 'pages.billing.vouchers')->name('vouchers');
         Route::view('/coupons', 'pages.billing.coupons')->name('coupons');
-        Route::view('/gateways', 'pages.billing.gateways')->name('gateways');
     });
 
     // -----------------------------------------------------------------------
