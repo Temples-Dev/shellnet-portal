@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\PlanAssignedNotification;
 use App\Services\RouterOS\RouterOSManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -81,6 +82,15 @@ class AssignSubscription
         // Provision on router outside the transaction so a connection failure
         // doesn't roll back the billing record
         $this->provision($subscription, $plan);
+
+        // Notify customer by email (non-fatal)
+        if ($customer->email) {
+            try {
+                $customer->notify(new PlanAssignedNotification($subscription));
+            } catch (\Throwable $e) {
+                Log::warning('[AssignSubscription] Notification failed', ['error' => $e->getMessage()]);
+            }
+        }
 
         return $subscription;
     }
