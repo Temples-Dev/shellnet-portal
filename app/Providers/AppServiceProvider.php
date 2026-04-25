@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Actions\Subscriptions\AssignSubscription;
+use App\Actions\Subscriptions\RevokeSubscription;
+use App\Services\RouterOS\RouterOSManager;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +18,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(RouterOSManager::class);
+
+        $this->app->bind(AssignSubscription::class, fn ($app) =>
+            new AssignSubscription($app->make(RouterOSManager::class))
+        );
+
+        $this->app->bind(RevokeSubscription::class, fn ($app) =>
+            new RevokeSubscription($app->make(RouterOSManager::class))
+        );
     }
 
     /**
