@@ -14,9 +14,9 @@
             <flux:input wire:model.live.debounce.300ms="search" placeholder="Search name or IP…" icon="magnifying-glass" />
         </div>
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:option value="">All Statuses</flux:option>
-            <flux:option value="Online">Online</flux:option>
-            <flux:option value="Offline">Offline</flux:option>
+            <flux:select.option value="">All Statuses</flux:select.option>
+            <flux:select.option value="Online">Online</flux:select.option>
+            <flux:select.option value="Offline">Offline</flux:select.option>
         </flux:select>
     </div>
 

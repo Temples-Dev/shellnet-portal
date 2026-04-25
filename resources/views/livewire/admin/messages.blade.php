@@ -79,9 +79,9 @@
             <flux:field>
                 <flux:label>Customer <flux:error name="composeCustomerId" /></flux:label>
                 <flux:select wire:model="composeCustomerId">
-                    <flux:option value="">Select customer…</flux:option>
+                    <flux:select.option value="">Select customer…</flux:select.option>
                     @foreach($this->customers as $c)
-                        <flux:option :value="$c->id">{{ $c->fullname }} ({{ $c->username }})</flux:option>
+                        <flux:select.option :value="$c->id">{{ $c->fullname }} ({{ $c->username }})</flux:select.option>
                     @endforeach
                 </flux:select>
             </flux:field>

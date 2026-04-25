@@ -64,7 +64,7 @@
                     <flux:label>Unit</flux:label>
                     <flux:select wire:model="fRateDownUnit">
                         @foreach($this->units() as $u)
-                            <flux:option :value="$u">{{ $u }}</flux:option>
+                            <flux:select.option :value="$u">{{ $u }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -76,7 +76,7 @@
                     <flux:label>Unit</flux:label>
                     <flux:select wire:model="fRateUpUnit">
                         @foreach($this->units() as $u)
-                            <flux:option :value="$u">{{ $u }}</flux:option>
+                            <flux:select.option :value="$u">{{ $u }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

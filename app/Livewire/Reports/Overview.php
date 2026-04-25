@@ -42,7 +42,7 @@ class Overview extends Component
         ];
     }
 
-    #[Computed(cache: true, seconds: 120)]
+    #[Computed]
     public function topPlans(): \Illuminate\Database\Eloquent\Collection
     {
         return Transaction::selectRaw('plan_name, COUNT(*) as count, SUM(price) as revenue')

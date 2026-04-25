@@ -14,15 +14,15 @@
             <flux:input wire:model.live.debounce.300ms="search" placeholder="Search name, username, email, phone…" icon="magnifying-glass" />
         </div>
         <flux:select wire:model.live="statusFilter" class="w-40">
-            <flux:option value="">All Statuses</flux:option>
+            <flux:select.option value="">All Statuses</flux:select.option>
             @foreach(\App\Models\Customer::STATUSES as $s)
-                <flux:option :value="$s">{{ $s }}</flux:option>
+                <flux:select.option :value="$s">{{ $s }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="serviceFilter" class="w-40">
-            <flux:option value="">All Services</flux:option>
+            <flux:select.option value="">All Services</flux:select.option>
             @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                <flux:option :value="$t">{{ $t }}</flux:option>
+                <flux:select.option :value="$t">{{ $t }}</flux:select.option>
             @endforeach
         </flux:select>
     </div>
@@ -164,7 +164,7 @@
                     <flux:label>Service Type</flux:label>
                     <flux:select wire:model="createServiceType">
                         @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                            <flux:option :value="$t">{{ $t }}</flux:option>
+                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -172,7 +172,7 @@
                     <flux:label>Status</flux:label>
                     <flux:select wire:model="createStatus">
                         @foreach(\App\Models\Customer::STATUSES as $s)
-                            <flux:option :value="$s">{{ $s }}</flux:option>
+                            <flux:select.option :value="$s">{{ $s }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -217,7 +217,7 @@
                     <flux:label>Service Type</flux:label>
                     <flux:select wire:model="editServiceType">
                         @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                            <flux:option :value="$t">{{ $t }}</flux:option>
+                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -225,7 +225,7 @@
                     <flux:label>Status</flux:label>
                     <flux:select wire:model="editStatus">
                         @foreach(\App\Models\Customer::STATUSES as $s)
-                            <flux:option :value="$s">{{ $s }}</flux:option>
+                            <flux:select.option :value="$s">{{ $s }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

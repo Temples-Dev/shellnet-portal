@@ -10,9 +10,9 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Search pools…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="routerFilter" class="w-48">
-            <flux:option value="">All Routers</flux:option>
+            <flux:select.option value="">All Routers</flux:select.option>
             @foreach($this->routers as $r)
-                <flux:option :value="$r->id">{{ $r->name }}</flux:option>
+                <flux:select.option :value="$r->id">{{ $r->name }}</flux:select.option>
             @endforeach
         </flux:select>
     </div>
@@ -70,9 +70,9 @@
             <flux:field>
                 <flux:label>Router</flux:label>
                 <flux:select wire:model="fRouterId">
-                    <flux:option value="">— None —</flux:option>
+                    <flux:select.option value="">— None —</flux:select.option>
                     @foreach($this->routers as $r)
-                        <flux:option :value="$r->id">{{ $r->name }}</flux:option>
+                        <flux:select.option :value="$r->id">{{ $r->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </flux:field>

@@ -20,15 +20,15 @@
         </div>
         <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
             <p class="text-xs text-zinc-400">Revenue Today</p>
-            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">${{ number_format($this->stats['revenue_today'], 2) }}</p>
+            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">₵{{ number_format($this->stats['revenue_today'], 2) }}</p>
         </div>
         <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
             <p class="text-xs text-zinc-400">This Month</p>
-            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">${{ number_format($this->stats['revenue_month'], 2) }}</p>
+            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">₵{{ number_format($this->stats['revenue_month'], 2) }}</p>
         </div>
         <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
             <p class="text-xs text-zinc-400">All-time Revenue</p>
-            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">${{ number_format($this->stats['revenue_total'], 2) }}</p>
+            <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">₵{{ number_format($this->stats['revenue_total'], 2) }}</p>
         </div>
     </div>
 
@@ -68,7 +68,7 @@
                     <tr>
                         <td class="px-5 py-3 font-medium text-zinc-900 dark:text-white">{{ $plan->plan_name }}</td>
                         <td class="px-5 py-3 text-zinc-500">{{ number_format($plan->count) }}</td>
-                        <td class="px-5 py-3 font-medium text-zinc-900 dark:text-white">${{ number_format($plan->revenue, 2) }}</td>
+                        <td class="px-5 py-3 font-medium text-zinc-900 dark:text-white">₵{{ number_format($plan->revenue, 2) }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="3" class="px-5 py-8 text-center text-zinc-400">No data yet</td></tr>

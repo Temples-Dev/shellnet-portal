@@ -32,7 +32,7 @@
                 </span>
             </div>
             <p class="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-                ${{ number_format($this->revenueToday, 2) }}
+                ₵{{ number_format($this->revenueToday, 2) }}
             </p>
             <flux:text class="mt-1 text-xs text-zinc-400">Collected since midnight</flux:text>
         </div>
@@ -104,7 +104,7 @@
                                     legend: { display: false },
                                     tooltip: {
                                         callbacks: {
-                                            label: (ctx) => ' $' + ctx.parsed.y.toFixed(2)
+                                            label: (ctx) => ' ₵' + ctx.parsed.y.toFixed(2)
                                         }
                                     }
                                 },
@@ -118,7 +118,7 @@
                                         ticks: {
                                             color: textColor,
                                             font: { size: 11 },
-                                            callback: (v) => '$' + v
+                                            callback: (v) => '₵' + v
                                         }
                                     }
                                 }
@@ -215,7 +215,7 @@
                                 {{ $tx->plan_name }}
                             </td>
                             <td class="px-5 py-3 font-semibold text-zinc-900 dark:text-white">
-                                ${{ number_format($tx->price, 2) }}
+                                ₵{{ number_format($tx->price, 2) }}
                             </td>
                             <td class="px-5 py-3">
                                 <flux:badge

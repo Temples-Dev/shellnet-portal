@@ -13,15 +13,15 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Search code…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="statusFilter" class="w-36">
-            <flux:option value="">All Status</flux:option>
+            <flux:select.option value="">All Status</flux:select.option>
             @foreach(\App\Models\Voucher::STATUSES as $s)
-                <flux:option :value="$s">{{ ucfirst($s) }}</flux:option>
+                <flux:select.option :value="$s">{{ ucfirst($s) }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="planFilter" class="w-48">
-            <flux:option value="">All Plans</flux:option>
+            <flux:select.option value="">All Plans</flux:select.option>
             @foreach($this->plans as $p)
-                <flux:option :value="$p->id">{{ $p->name }}</flux:option>
+                <flux:select.option :value="$p->id">{{ $p->name }}</flux:select.option>
             @endforeach
         </flux:select>
     </div>
@@ -81,9 +81,9 @@
             <flux:field>
                 <flux:label>Plan <flux:error name="genPlanId" /></flux:label>
                 <flux:select wire:model="genPlanId">
-                    <flux:option value="">Select plan…</flux:option>
+                    <flux:select.option value="">Select plan…</flux:select.option>
                     @foreach($this->plans as $p)
-                        <flux:option :value="$p->id">{{ $p->name }}</flux:option>
+                        <flux:select.option :value="$p->id">{{ $p->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </flux:field>
@@ -91,17 +91,17 @@
                 <flux:field>
                     <flux:label>Type</flux:label>
                     <flux:select wire:model="genType">
-                        <flux:option value="Hotspot">Hotspot</flux:option>
-                        <flux:option value="PPPoE">PPPoE</flux:option>
-                        <flux:option value="VPN">VPN</flux:option>
+                        <flux:select.option value="Hotspot">Hotspot</flux:select.option>
+                        <flux:select.option value="PPPoE">PPPoE</flux:select.option>
+                        <flux:select.option value="VPN">VPN</flux:select.option>
                     </flux:select>
                 </flux:field>
                 <flux:field>
                     <flux:label>Router (optional)</flux:label>
                     <flux:select wire:model="genRouterId">
-                        <flux:option value="">Any</flux:option>
+                        <flux:select.option value="">Any</flux:select.option>
                         @foreach($this->routers as $r)
-                            <flux:option :value="$r->id">{{ $r->name }}</flux:option>
+                            <flux:select.option :value="$r->id">{{ $r->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

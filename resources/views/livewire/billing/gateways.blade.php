@@ -52,18 +52,18 @@
                     <flux:field>
                         <flux:label>Customer <flux:error name="linkCustomerId" /></flux:label>
                         <flux:select wire:model="linkCustomerId">
-                            <flux:option value="">Select customer…</flux:option>
+                            <flux:select.option value="">Select customer…</flux:select.option>
                             @foreach($this->customers as $c)
-                                <flux:option :value="$c->id">{{ $c->fullname }}</flux:option>
+                                <flux:select.option :value="$c->id">{{ $c->fullname }}</flux:select.option>
                             @endforeach
                         </flux:select>
                     </flux:field>
                     <flux:field>
                         <flux:label>Plan <flux:error name="linkPlanId" /></flux:label>
                         <flux:select wire:model="linkPlanId">
-                            <flux:option value="">Select plan…</flux:option>
+                            <flux:select.option value="">Select plan…</flux:select.option>
                             @foreach($this->plans as $p)
-                                <flux:option :value="$p->id">{{ $p->name }} — ${{ number_format($p->price, 2) }}</flux:option>
+                                <flux:select.option :value="$p->id">{{ $p->name }} — ₵{{ number_format($p->price, 2) }}</flux:select.option>
                             @endforeach
                         </flux:select>
                     </flux:field>

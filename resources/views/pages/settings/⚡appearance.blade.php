@@ -7,7 +7,7 @@ new #[Title('Appearance settings')] class extends Component {
     //
 }; ?>
 
-<section class="w-full">
+<flux:main>
     @include('partials.settings-heading')
 
     <flux:heading class="sr-only">{{ __('Appearance settings') }}</flux:heading>
@@ -19,4 +19,4 @@ new #[Title('Appearance settings')] class extends Component {
             <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
         </flux:radio.group>
     </x-pages::settings.layout>
-</section>
+</flux:main>

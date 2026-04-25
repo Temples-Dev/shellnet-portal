@@ -14,9 +14,9 @@
             <flux:input wire:model.live.debounce.300ms="search" placeholder="Search plans…" icon="magnifying-glass" />
         </div>
         <flux:select wire:model.live="typeFilter" class="w-40">
-            <flux:option value="">All Types</flux:option>
+            <flux:select.option value="">All Types</flux:select.option>
             @foreach(\App\Models\Plan::TYPES as $t)
-                <flux:option :value="$t">{{ $t }}</flux:option>
+                <flux:select.option :value="$t">{{ $t }}</flux:select.option>
             @endforeach
         </flux:select>
     </div>
@@ -46,7 +46,7 @@
                             default   => 'zinc',
                         }">{{ $plan->type }}</flux:badge>
                     </flux:table.cell>
-                    <flux:table.cell variant="strong">${{ number_format($plan->price, 2) }}</flux:table.cell>
+                    <flux:table.cell variant="strong">₵{{ number_format($plan->price, 2) }}</flux:table.cell>
                     <flux:table.cell class="text-zinc-500">{{ $plan->validity }} {{ $plan->validity_unit }}</flux:table.cell>
                     <flux:table.cell class="text-sm text-zinc-500">
                         {{ $plan->bandwidth?->name ?? '—' }}
@@ -95,7 +95,7 @@
                     <flux:label>Type</flux:label>
                     <flux:select wire:model="fType">
                         @foreach(\App\Models\Plan::TYPES as $t)
-                            <flux:option :value="$t">{{ $t }}</flux:option>
+                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -111,25 +111,25 @@
                     <flux:label>Validity Unit</flux:label>
                     <flux:select wire:model="fValidityUnit">
                         @foreach(\App\Models\Plan::VALIDITY_UNITS as $u)
-                            <flux:option :value="$u">{{ $u }}</flux:option>
+                            <flux:select.option :value="$u">{{ $u }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
                 <flux:field>
                     <flux:label>Bandwidth Profile</flux:label>
                     <flux:select wire:model="fBandwidthId">
-                        <flux:option value="">— None —</flux:option>
+                        <flux:select.option value="">— None —</flux:select.option>
                         @foreach($this->bandwidths as $bw)
-                            <flux:option :value="$bw->id">{{ $bw->name }}</flux:option>
+                            <flux:select.option :value="$bw->id">{{ $bw->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
                 <flux:field>
                     <flux:label>Router</flux:label>
                     <flux:select wire:model="fRouterId">
-                        <flux:option value="">— None —</flux:option>
+                        <flux:select.option value="">— None —</flux:select.option>
                         @foreach($this->routers as $r)
-                            <flux:option :value="$r->id">{{ $r->name }}</flux:option>
+                            <flux:select.option :value="$r->id">{{ $r->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

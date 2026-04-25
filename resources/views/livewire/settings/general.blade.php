@@ -93,9 +93,9 @@
                 <flux:field>
                     <flux:label>Encryption</flux:label>
                     <flux:select wire:model="mailEncryption">
-                        <flux:option value="tls">TLS</flux:option>
-                        <flux:option value="ssl">SSL</flux:option>
-                        <flux:option value="starttls">STARTTLS</flux:option>
+                        <flux:select.option value="tls">TLS</flux:select.option>
+                        <flux:select.option value="ssl">SSL</flux:select.option>
+                        <flux:select.option value="starttls">STARTTLS</flux:select.option>
                     </flux:select>
                 </flux:field>
                 <flux:button type="submit" variant="primary">Save Mail Settings</flux:button>

@@ -10,9 +10,9 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Search code or description…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="statusFilter" class="w-36">
-            <flux:option value="">All Status</flux:option>
-            <flux:option value="active">Active</flux:option>
-            <flux:option value="inactive">Inactive</flux:option>
+            <flux:select.option value="">All Status</flux:select.option>
+            <flux:select.option value="active">Active</flux:select.option>
+            <flux:select.option value="inactive">Inactive</flux:select.option>
         </flux:select>
     </div>
 
@@ -38,7 +38,7 @@
                         @if($c->type === 'percent')
                             <flux:badge size="sm" color="blue">{{ $c->value }}%</flux:badge>
                         @else
-                            <flux:badge size="sm" color="green">${{ number_format($c->value, 2) }}</flux:badge>
+                            <flux:badge size="sm" color="green">₵{{ number_format($c->value, 2) }}</flux:badge>
                         @endif
                     </flux:table.cell>
                     <flux:table.cell class="text-zinc-500">
@@ -86,8 +86,8 @@
                 <flux:field>
                     <flux:label>Status</flux:label>
                     <flux:select wire:model="fStatus">
-                        <flux:option value="active">Active</flux:option>
-                        <flux:option value="inactive">Inactive</flux:option>
+                        <flux:select.option value="active">Active</flux:select.option>
+                        <flux:select.option value="inactive">Inactive</flux:select.option>
                     </flux:select>
                 </flux:field>
             </div>
@@ -95,8 +95,8 @@
                 <flux:field>
                     <flux:label>Type <flux:error name="fType" /></flux:label>
                     <flux:select wire:model="fType">
-                        <flux:option value="fixed">Fixed ($)</flux:option>
-                        <flux:option value="percent">Percent (%)</flux:option>
+                        <flux:select.option value="fixed">Fixed ($)</flux:select.option>
+                        <flux:select.option value="percent">Percent (%)</flux:select.option>
                     </flux:select>
                 </flux:field>
                 <flux:field>

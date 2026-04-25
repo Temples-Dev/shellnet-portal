@@ -59,7 +59,7 @@
 
             <div class="mt-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800">
                 <flux:text class="text-xs text-zinc-400">Account Balance</flux:text>
-                <p class="text-xl font-bold text-zinc-900 dark:text-white">${{ number_format($this->customer->balance, 2) }}</p>
+                <p class="text-xl font-bold text-zinc-900 dark:text-white">₵{{ number_format($this->customer->balance, 2) }}</p>
             </div>
         </div>
 
@@ -113,7 +113,7 @@
                     </div>
                 @else
                     <div class="rounded-lg border border-dashed border-zinc-200 p-6 text-center dark:border-zinc-700">
-                        <flux:icon.wifi-off class="mx-auto mb-2 size-8 text-zinc-300 dark:text-zinc-600" />
+                        <flux:icon.signal-slash class="mx-auto mb-2 size-8 text-zinc-300 dark:text-zinc-600" />
                         <flux:text class="text-zinc-400">No active subscription</flux:text>
                     </div>
                 @endif
@@ -140,7 +140,7 @@
                                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/40">
                                     <td class="px-5 py-3 font-mono text-xs text-zinc-400">{{ $tx->invoice }}</td>
                                     <td class="px-5 py-3 text-zinc-700 dark:text-zinc-300">{{ $tx->plan_name }}</td>
-                                    <td class="px-5 py-3 font-semibold text-zinc-900 dark:text-white">${{ number_format($tx->price, 2) }}</td>
+                                    <td class="px-5 py-3 font-semibold text-zinc-900 dark:text-white">₵{{ number_format($tx->price, 2) }}</td>
                                     <td class="px-5 py-3">
                                         <flux:badge size="sm" :color="match($tx->method) {
                                             'paystack' => 'green',
@@ -199,7 +199,7 @@
                     <flux:label>Service</flux:label>
                     <flux:select wire:model="editServiceType">
                         @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                            <flux:option :value="$t">{{ $t }}</flux:option>
+                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -207,7 +207,7 @@
                     <flux:label>Status</flux:label>
                     <flux:select wire:model="editStatus">
                         @foreach(\App\Models\Customer::STATUSES as $s)
-                            <flux:option :value="$s">{{ $s }}</flux:option>
+                            <flux:select.option :value="$s">{{ $s }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -215,7 +215,7 @@
                     <flux:label>Account</flux:label>
                     <flux:select wire:model="editAccountType">
                         @foreach(\App\Models\Customer::ACCOUNT_TYPES as $a)
-                            <flux:option :value="$a">{{ $a }}</flux:option>
+                            <flux:select.option :value="$a">{{ $a }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

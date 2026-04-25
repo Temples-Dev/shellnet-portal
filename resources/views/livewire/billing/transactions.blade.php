@@ -3,7 +3,7 @@
         <div>
             <flux:heading size="xl">Transactions</flux:heading>
             <flux:subheading>
-                {{ number_format($this->totals['count']) }} records · ${{ number_format($this->totals['revenue'], 2) }} total
+                {{ number_format($this->totals['count']) }} records · ₵{{ number_format($this->totals['revenue'], 2) }} total
             </flux:subheading>
         </div>
         <flux:button wire:click="exportCsv" icon="arrow-down-tray" variant="outline">Export CSV</flux:button>
@@ -12,15 +12,15 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Invoice, username, plan…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="typeFilter" class="w-36">
-            <flux:option value="">All Types</flux:option>
+            <flux:select.option value="">All Types</flux:select.option>
             @foreach(\App\Models\Plan::TYPES as $t)
-                <flux:option :value="$t">{{ $t }}</flux:option>
+                <flux:select.option :value="$t">{{ $t }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:select wire:model.live="methodFilter" class="w-36">
-            <flux:option value="">All Methods</flux:option>
+            <flux:select.option value="">All Methods</flux:select.option>
             @foreach(['cash','card','paystack','voucher'] as $m)
-                <flux:option :value="$m">{{ ucfirst($m) }}</flux:option>
+                <flux:select.option :value="$m">{{ ucfirst($m) }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:input wire:model.live="dateFrom" type="date" class="w-36" />
@@ -52,7 +52,7 @@
                         @endif
                     </flux:table.cell>
                     <flux:table.cell class="text-zinc-600 dark:text-zinc-300">{{ $tx->plan_name }}</flux:table.cell>
-                    <flux:table.cell variant="strong">${{ number_format($tx->price, 2) }}</flux:table.cell>
+                    <flux:table.cell variant="strong">₵{{ number_format($tx->price, 2) }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" :color="match($tx->method) {
                             'paystack' => 'green',

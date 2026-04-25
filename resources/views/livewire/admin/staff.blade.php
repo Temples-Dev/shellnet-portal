@@ -10,9 +10,9 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Search name or email…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="roleFilter" class="w-40">
-            <flux:option value="">All Roles</flux:option>
+            <flux:select.option value="">All Roles</flux:select.option>
             @foreach(\App\Models\User::USER_TYPES as $r)
-                <flux:option :value="$r">{{ $r }}</flux:option>
+                <flux:select.option :value="$r">{{ $r }}</flux:select.option>
             @endforeach
         </flux:select>
     </div>
@@ -103,7 +103,7 @@
                     <flux:label>Role</flux:label>
                     <flux:select wire:model="fUserType">
                         @foreach(\App\Models\User::USER_TYPES as $r)
-                            <flux:option :value="$r">{{ $r }}</flux:option>
+                            <flux:select.option :value="$r">{{ $r }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -111,7 +111,7 @@
                     <flux:label>Status</flux:label>
                     <flux:select wire:model="fStatus">
                         @foreach(\App\Models\User::STATUSES as $s)
-                            <flux:option :value="$s">{{ $s }}</flux:option>
+                            <flux:select.option :value="$s">{{ $s }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

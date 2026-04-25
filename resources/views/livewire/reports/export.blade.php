@@ -11,7 +11,7 @@
                     <flux:label>Dataset <flux:error name="entity" /></flux:label>
                     <flux:select wire:model.live="entity">
                         @foreach(\App\Livewire\Reports\Export::ENTITIES as $key => $label)
-                            <flux:option :value="$key">{{ $label }}</flux:option>
+                            <flux:select.option :value="$key">{{ $label }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -31,9 +31,9 @@
                 <flux:field>
                     <flux:label>Status Filter</flux:label>
                     <flux:select wire:model="statusFilter">
-                        <flux:option value="">All Statuses</flux:option>
+                        <flux:select.option value="">All Statuses</flux:select.option>
                         @foreach(\App\Models\Customer::STATUSES as $s)
-                            <flux:option :value="$s">{{ $s }}</flux:option>
+                            <flux:select.option :value="$s">{{ $s }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>

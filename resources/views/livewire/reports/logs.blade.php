@@ -7,9 +7,9 @@
     <div class="mb-4 flex flex-wrap gap-3">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Search descriptions…" icon="magnifying-glass" class="flex-1 min-w-48" />
         <flux:select wire:model.live="typeFilter" class="w-52">
-            <flux:option value="">All Event Types</flux:option>
+            <flux:select.option value="">All Event Types</flux:select.option>
             @foreach($this->types as $type)
-                <flux:option :value="$type">{{ str_replace('_', ' ', $type) }}</flux:option>
+                <flux:select.option :value="$type">{{ str_replace('_', ' ', $type) }}</flux:select.option>
             @endforeach
         </flux:select>
         <flux:input wire:model.live="dateFrom" type="date" class="w-36" />

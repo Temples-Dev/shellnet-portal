@@ -25,7 +25,7 @@
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Billing')" class="grid">
-                    <flux:sidebar.item icon="receipt-text" :href="route('billing.transactions')" :current="request()->routeIs('billing.transactions*')" wire:navigate>
+                    <flux:sidebar.item icon="document-text" :href="route('billing.transactions')" :current="request()->routeIs('billing.transactions*')" wire:navigate>
                         {{ __('Transactions') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="ticket" :href="route('billing.vouchers')" :current="request()->routeIs('billing.vouchers*')" wire:navigate>
@@ -43,22 +43,22 @@
                     <flux:sidebar.item icon="wifi" :href="route('services.plans')" :current="request()->routeIs('services.plans*')" wire:navigate>
                         {{ __('Plans') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="gauge" :href="route('services.bandwidth')" :current="request()->routeIs('services.bandwidth*')" wire:navigate>
+                    <flux:sidebar.item icon="signal" :href="route('services.bandwidth')" :current="request()->routeIs('services.bandwidth*')" wire:navigate>
                         {{ __('Bandwidth') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Network')" class="grid">
-                    <flux:sidebar.item icon="router" :href="route('network.routers')" :current="request()->routeIs('network.routers*')" wire:navigate>
+                    <flux:sidebar.item icon="server-stack" :href="route('network.routers')" :current="request()->routeIs('network.routers*')" wire:navigate>
                         {{ __('Routers') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="circle-dot" :href="route('network.pools')" :current="request()->routeIs('network.pools*')" wire:navigate>
+                    <flux:sidebar.item icon="squares-2x2" :href="route('network.pools')" :current="request()->routeIs('network.pools*')" wire:navigate>
                         {{ __('IP Pools') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="server" :href="route('network.radius')" :current="request()->routeIs('network.radius*')" wire:navigate>
                         {{ __('RADIUS') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="cable" :href="route('network.odp')" :current="request()->routeIs('network.odp*')" wire:navigate>
+                    <flux:sidebar.item icon="link" :href="route('network.odp')" :current="request()->routeIs('network.odp*')" wire:navigate>
                         {{ __('ODPs') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
@@ -75,17 +75,19 @@
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
+                @if(auth()->user()->isSuperAdmin())
                 <flux:sidebar.group :heading="__('Admin')" class="grid">
                     <flux:sidebar.item icon="shield-check" :href="route('admin.staff')" :current="request()->routeIs('admin.staff*')" wire:navigate>
                         {{ __('Staff') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="message-square-text" :href="route('admin.messages')" :current="request()->routeIs('admin.messages*')" wire:navigate>
+                    <flux:sidebar.item icon="chat-bubble-left-ellipsis" :href="route('admin.messages')" :current="request()->routeIs('admin.messages*')" wire:navigate>
                         {{ __('Messages') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="cog-6-tooth" :href="route('settings.general')" :current="request()->routeIs('settings.*')" wire:navigate>
                         {{ __('Settings') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

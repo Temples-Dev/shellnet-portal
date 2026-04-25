@@ -70,7 +70,7 @@
                     <flux:label>Type</flux:label>
                     <flux:select wire:model="fType">
                         @foreach(\App\Livewire\Network\Radius::NAS_TYPES as $t)
-                            <flux:option :value="$t">{{ ucfirst($t) }}</flux:option>
+                            <flux:select.option :value="$t">{{ ucfirst($t) }}</flux:select.option>
                         @endforeach
                     </flux:select>
                 </flux:field>
@@ -99,9 +99,9 @@
             <flux:field>
                 <flux:label>Router (optional)</flux:label>
                 <flux:select wire:model="fRouterId">
-                    <flux:option value="">— None —</flux:option>
+                    <flux:select.option value="">— None —</flux:select.option>
                     @foreach($this->routers as $r)
-                        <flux:option :value="$r->id">{{ $r->name }}</flux:option>
+                        <flux:select.option :value="$r->id">{{ $r->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </flux:field>
