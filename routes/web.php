@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : view('landing');
+})->name('home');
 
 // Paystack payment routes (no auth required for webhook; callback needs auth)
 Route::post('/payment/paystack/webhook', \App\Http\Controllers\PaystackWebhookController::class)
