@@ -27,7 +27,7 @@ class SubscriptionFactory extends Factory
             'router_id'    => $plan->router_id,
             'router_name'  => Router::find($plan->router_id)?->name ?? 'Main Router',
             'type'         => $plan->type,
-            'method'       => $this->faker->randomElement(['cash', 'mpesa', 'card', 'voucher']),
+            'method'       => $this->faker->randomElement(['cash', 'card', 'paystack', 'voucher']),
             'status'       => $status,
             'recharged_at' => $rechargedAt,
             'expires_at'   => $expiresAt,

@@ -221,10 +221,10 @@
                                 <flux:badge
                                     size="sm"
                                     :color="match($tx->method) {
-                                        'mpesa' => 'green',
-                                        'card'  => 'blue',
-                                        'cash'  => 'zinc',
-                                        default => 'yellow'
+                                        'paystack' => 'green',
+                                        'card'     => 'blue',
+                                        'cash'     => 'zinc',
+                                        default    => 'yellow'
                                     }"
                                 >
                                     {{ ucfirst($tx->method ?? 'N/A') }}

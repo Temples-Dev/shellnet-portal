@@ -25,7 +25,7 @@ class TransactionFactory extends Factory
             'plan_name' => $plan->name,
             'price' => $plan->price,
             'type' => $plan->type,
-            'method' => $this->faker->randomElement(['cash', 'mpesa', 'card', 'voucher']),
+            'method' => $this->faker->randomElement(['cash', 'card', 'paystack', 'voucher']),
             'router_id' => $plan->router_id,
             'router_name' => $router?->name ?? 'Main Router',
             'recharged_at' => $this->faker->dateTimeBetween('-12 months', 'now'),

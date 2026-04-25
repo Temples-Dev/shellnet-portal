@@ -143,11 +143,11 @@
                                     <td class="px-5 py-3 font-semibold text-zinc-900 dark:text-white">${{ number_format($tx->price, 2) }}</td>
                                     <td class="px-5 py-3">
                                         <flux:badge size="sm" :color="match($tx->method) {
-                                            'mpesa'   => 'green',
-                                            'card'    => 'blue',
-                                            'cash'    => 'zinc',
-                                            'voucher' => 'yellow',
-                                            default   => 'zinc',
+                                            'paystack' => 'green',
+                                            'card'     => 'blue',
+                                            'cash'     => 'zinc',
+                                            'voucher'  => 'yellow',
+                                            default    => 'zinc',
                                         }">{{ ucfirst($tx->method ?? '—') }}</flux:badge>
                                     </td>
                                     <td class="px-5 py-3 text-zinc-400 whitespace-nowrap">{{ $tx->created_at?->format('d M Y') }}</td>

@@ -19,7 +19,7 @@
         </flux:select>
         <flux:select wire:model.live="methodFilter" class="w-36">
             <flux:option value="">All Methods</flux:option>
-            @foreach(['cash','mpesa','card','paystack','voucher'] as $m)
+            @foreach(['cash','card','paystack','voucher'] as $m)
                 <flux:option :value="$m">{{ ucfirst($m) }}</flux:option>
             @endforeach
         </flux:select>
@@ -55,7 +55,7 @@
                     <flux:table.cell variant="strong">${{ number_format($tx->price, 2) }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" :color="match($tx->method) {
-                            'mpesa','paystack' => 'green',
+                            'paystack' => 'green',
                             'card'    => 'blue',
                             'cash'    => 'zinc',
                             'voucher' => 'yellow',
