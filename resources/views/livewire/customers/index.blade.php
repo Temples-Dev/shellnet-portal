@@ -19,12 +19,7 @@
                 <flux:select.option :value="$s">{{ $s }}</flux:select.option>
             @endforeach
         </flux:select>
-        <flux:select wire:model.live="serviceFilter" class="w-40">
-            <flux:select.option value="">All Services</flux:select.option>
-            @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                <flux:select.option :value="$t">{{ $t }}</flux:select.option>
-            @endforeach
-        </flux:select>
+        {{-- service filter hidden: platform is Hotspot-only --}}
     </div>
 
     {{-- Table --}}
@@ -75,12 +70,7 @@
                         {{ $customer->username }}
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" :color="match($customer->service_type) {
-                            'Hotspot' => 'blue',
-                            'PPPoE'   => 'purple',
-                            'VPN'     => 'cyan',
-                            default   => 'zinc',
-                        }">{{ $customer->service_type }}</flux:badge>
+                        <flux:badge size="sm" color="blue">{{ $customer->service_type }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" :color="match($customer->status) {
@@ -159,14 +149,17 @@
                 <flux:label>Password <flux:error name="createPassword" /></flux:label>
                 <flux:input wire:model="createPassword" type="password" placeholder="Min 6 characters" />
             </flux:field>
+            <flux:field>
+                <flux:label>MAC Address <span class="font-normal text-zinc-400">(optional — locks device)</span> <flux:error name="createMacAddress" /></flux:label>
+                <flux:input wire:model="createMacAddress" placeholder="AA:BB:CC:DD:EE:FF" class="font-mono uppercase" />
+            </flux:field>
             <div class="grid grid-cols-2 gap-4">
                 <flux:field>
                     <flux:label>Service Type</flux:label>
-                    <flux:select wire:model="createServiceType">
-                        @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
+                    <div class="flex h-10 items-center rounded-lg border border-zinc-700 bg-zinc-800/50 px-3">
+                        <flux:badge color="blue" size="sm">Hotspot</flux:badge>
+                    </div>
+                    <input type="hidden" wire:model="createServiceType" value="Hotspot" />
                 </flux:field>
                 <flux:field>
                     <flux:label>Status</flux:label>
@@ -212,14 +205,17 @@
                     <flux:input wire:model="editPhone" />
                 </flux:field>
             </div>
+            <flux:field>
+                <flux:label>MAC Address <span class="font-normal text-zinc-400">(optional)</span> <flux:error name="editMacAddress" /></flux:label>
+                <flux:input wire:model="editMacAddress" placeholder="AA:BB:CC:DD:EE:FF" class="font-mono uppercase" />
+            </flux:field>
             <div class="grid grid-cols-2 gap-4">
                 <flux:field>
                     <flux:label>Service Type</flux:label>
-                    <flux:select wire:model="editServiceType">
-                        @foreach(\App\Models\Customer::SERVICE_TYPES as $t)
-                            <flux:select.option :value="$t">{{ $t }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
+                    <div class="flex h-10 items-center rounded-lg border border-zinc-700 bg-zinc-800/50 px-3">
+                        <flux:badge color="blue" size="sm">Hotspot</flux:badge>
+                    </div>
+                    <input type="hidden" wire:model="editServiceType" value="Hotspot" />
                 </flux:field>
                 <flux:field>
                     <flux:label>Status</flux:label>

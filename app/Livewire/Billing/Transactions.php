@@ -38,7 +38,7 @@ class Transactions extends Component
     #[Computed]
     public function transactions()
     {
-        return Transaction::with('customer')
+        return Transaction::with(['customer', 'paymentTransaction.coupon'])
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('invoice', 'like', "%{$this->search}%")
                   ->orWhere('username', 'like', "%{$this->search}%")
@@ -73,7 +73,7 @@ class Transactions extends Component
 
     public function exportCsv(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $rows = Transaction::with('customer')
+        $rows = Transaction::with(['customer', 'paymentTransaction.coupon'])
             ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
             ->when($this->methodFilter, fn ($q) => $q->where('method', $this->methodFilter))
             ->when($this->dateFrom, fn ($q) => $q->whereDate('created_at', '>=', $this->dateFrom))
@@ -85,8 +85,9 @@ class Transactions extends Component
 
         return response()->streamDownload(function () use ($rows): void {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Invoice', 'Customer', 'Plan', 'Type', 'Method', 'Amount', 'Date']);
+            fputcsv($handle, ['Invoice', 'Customer', 'Plan', 'Type', 'Method', 'Amount', 'Original Price', 'Coupon', 'Discount', 'Date']);
             foreach ($rows as $tx) {
+                $pt = $tx->paymentTransaction;
                 fputcsv($handle, [
                     $tx->invoice,
                     $tx->customer?->fullname ?? $tx->username,
@@ -94,6 +95,9 @@ class Transactions extends Component
                     $tx->type,
                     $tx->method,
                     number_format($tx->price, 2),
+                    $pt && $pt->original_price ? number_format((float) $pt->original_price, 2) : '',
+                    $pt?->coupon?->code ?? '',
+                    $pt && $pt->discount_amount > 0 ? number_format((float) $pt->discount_amount, 2) : '',
                     $tx->created_at?->format('Y-m-d H:i'),
                 ]);
             }

@@ -5,10 +5,13 @@ namespace App\Livewire\Billing;
 use App\Models\Plan;
 use App\Models\Router;
 use App\Models\Voucher;
+use App\Services\RouterOS\RouterOSClientFactory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
+use RouterOS\Query;
 
 class Vouchers extends Component
 {
@@ -60,9 +63,13 @@ class Vouchers extends Component
         $this->validate([
             'genCount'    => 'required|integer|min:1|max:500',
             'genPlanId'   => 'required|exists:plans,id',
-            'genType'     => 'required|in:Hotspot,PPPoE,VPN',
+            'genType'     => 'required|in:Hotspot',
             'genRouterId' => 'nullable|exists:routers,id',
         ]);
+
+        $plan     = Plan::with('router')->find($this->genPlanId);
+        $routerId = $this->genRouterId ?: $plan?->router_id;
+        $router   = $routerId ? Router::find($routerId) : null;
 
         $now   = now();
         $codes = [];
@@ -72,7 +79,7 @@ class Vouchers extends Component
                 'code'         => strtoupper(Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4)),
                 'type'         => $this->genType,
                 'plan_id'      => $this->genPlanId ?: null,
-                'router_id'    => $this->genRouterId ?: null,
+                'router_id'    => $routerId ?: null,
                 'status'       => 'unused',
                 'generated_by' => auth()->id(),
                 'created_at'   => $now,
@@ -82,8 +89,44 @@ class Vouchers extends Component
 
         Voucher::insert($codes);
 
+        // Push voucher codes to MikroTik as hotspot users (non-fatal)
+        if ($router && $this->genType === 'Hotspot') {
+            $this->pushHotspotVouchers($router, $plan, $codes);
+        }
+
         $this->modal('voucher-generate')->close();
         unset($this->vouchers);
+    }
+
+    private function pushHotspotVouchers(Router $router, Plan $plan, array $codes): void
+    {
+        try {
+            $client = RouterOSClientFactory::make($router);
+
+            foreach ($codes as $row) {
+                $code = $row['code'];
+
+                // Skip if already exists on router
+                $existing = $client->query('/ip/hotspot/user/print', [['name', '=', $code]])->read();
+                if (! empty($existing)) {
+                    continue;
+                }
+
+                $query = (new Query('/ip/hotspot/user/add'))
+                    ->equal('name', $code)
+                    ->equal('password', $code)
+                    ->equal('profile', $plan->name)
+                    ->equal('comment', 'voucher');
+
+                $client->query($query)->read();
+            }
+        } catch (\Throwable $e) {
+            Log::warning('[Vouchers] Router push failed', [
+                'router' => $router->name,
+                'error'  => $e->getMessage(),
+            ]);
+            session()->flash('routerWarning', "Vouchers saved but could not be pushed to router \"{$router->name}\": " . $e->getMessage());
+        }
     }
 
     public function disable(int $id): void

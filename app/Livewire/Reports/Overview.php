@@ -59,7 +59,7 @@ class Overview extends Component
             'labels' => ['Active', 'Expired'],
             'data'   => [
                 Subscription::where('status', 'on')->count(),
-                Subscription::where('status', 'off')->count(),
+                Subscription::where('status', 'expired')->count(),
             ],
         ];
     }

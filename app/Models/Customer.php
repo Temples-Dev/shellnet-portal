@@ -22,7 +22,7 @@ class Customer extends Authenticatable
 
     public const STATUSES = ['Active', 'Inactive', 'Banned', 'Disabled', 'Limited', 'Suspended'];
 
-    public const SERVICE_TYPES = ['Hotspot', 'PPPoE', 'VPN', 'Others'];
+    public const SERVICE_TYPES = ['Hotspot'];
 
     public const ACCOUNT_TYPES = ['Personal', 'Business'];
 
@@ -52,6 +52,7 @@ class Customer extends Authenticatable
         'account_type',
         'balance',
         'service_type',
+        'mac_address',
         'auto_renewal',
         'status',
         'created_by',

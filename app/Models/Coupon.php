@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Coupon extends Model
 {
@@ -14,6 +15,7 @@ class Coupon extends Model
      */
     protected $fillable = [
         'code',
+        'customer_id',
         'type',
         'value',
         'description',
@@ -50,11 +52,12 @@ class Coupon extends Model
     public function scopeActive(Builder $query): Builder
     {
         $today = now()->toDateString();
+        $now   = now()->toDateTimeString();
 
         return $query->where('status', 'active')
-                     ->where(function (Builder $q) use ($today): void {
+                     ->where(function (Builder $q) use ($now): void {
                          $q->whereNull('starts_at')
-                           ->orWhere('starts_at', '<=', $today);
+                           ->orWhere('starts_at', '<=', $now);
                      })
                      ->where(function (Builder $q) use ($today): void {
                          $q->whereNull('expires_at')
@@ -103,6 +106,15 @@ class Coupon extends Model
     public function getIsExpiredAttribute(): bool
     {
         return $this->expires_at && $this->expires_at->isPast();
+    }
+
+    // -------------------------------------------------------------------------
+    // Relationships
+    // -------------------------------------------------------------------------
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Customer::class);
     }
 
     // -------------------------------------------------------------------------

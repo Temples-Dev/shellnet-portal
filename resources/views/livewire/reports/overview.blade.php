@@ -36,16 +36,73 @@
         {{-- Revenue Chart --}}
         <div class="col-span-2 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:heading size="sm" class="mb-4">Revenue — Last 6 Months</flux:heading>
-            <div wire:ignore>
-                <canvas id="overviewRevenueChart" height="80"></canvas>
+            <div
+                wire:ignore
+                x-data="{
+                    chart: null,
+                    init() {
+                        this.chart = new Chart(this.$refs.canvas, {
+                            type: 'bar',
+                            data: {
+                                labels: @js($this->monthlyRevenue['labels']),
+                                datasets: [{
+                                    label: 'Revenue (₵)',
+                                    data: @js($this->monthlyRevenue['data']),
+                                    backgroundColor: 'rgba(59,130,246,0.7)',
+                                    borderRadius: 4,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } }
+                            }
+                        });
+                    }
+                }"
+                class="relative"
+            >
+                <canvas x-ref="canvas" height="80"></canvas>
             </div>
         </div>
 
         {{-- Subscription Breakdown --}}
         <div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:heading size="sm" class="mb-4">Subscription Status</flux:heading>
-            <div wire:ignore>
-                <canvas id="overviewSubChart" height="160"></canvas>
+            <div
+                wire:ignore
+                x-data="{
+                    chart: null,
+                    init() {
+                        const isDark = document.documentElement.classList.contains('dark');
+                        this.chart = new Chart(this.$refs.canvas, {
+                            type: 'doughnut',
+                            data: {
+                                labels: @js($this->subscriptionBreakdown['labels']),
+                                datasets: [{
+                                    data: @js($this->subscriptionBreakdown['data']),
+                                    backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(113,113,122,0.5)'],
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: isDark ? '#a1a1aa' : '#52525b',
+                                            boxWidth: 10, boxHeight: 10,
+                                            borderRadius: 3, useBorderRadius: true,
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }"
+                class="relative"
+            >
+                <canvas x-ref="canvas" height="160"></canvas>
             </div>
         </div>
     </div>
@@ -78,37 +135,3 @@
     </div>
 </flux:main>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const revenueLabels = @js($this->monthlyRevenue['labels']);
-    const revenueData   = @js($this->monthlyRevenue['data']);
-    const subLabels     = @js($this->subscriptionBreakdown['labels']);
-    const subData       = @js($this->subscriptionBreakdown['data']);
-
-    new Chart(document.getElementById('overviewRevenueChart'), {
-        type: 'bar',
-        data: {
-            labels: revenueLabels,
-            datasets: [{
-                label: 'Revenue ($)',
-                data: revenueData,
-                backgroundColor: 'rgba(59,130,246,0.7)',
-                borderRadius: 4,
-            }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-    });
-
-    new Chart(document.getElementById('overviewSubChart'), {
-        type: 'doughnut',
-        data: {
-            labels: subLabels,
-            datasets: [{
-                data: subData,
-                backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(113,113,122,0.5)'],
-            }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-    });
-});
-</script>

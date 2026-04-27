@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Coupon;
 
 class PaymentTransaction extends Model
 {
@@ -46,6 +47,9 @@ class PaymentTransaction extends Model
         'pg_response',
         'reference',
         'invoice',
+        'coupon_id',
+        'discount_amount',
+        'original_price',
         'currency',
         'status',
         'expired_at',
@@ -58,11 +62,13 @@ class PaymentTransaction extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'price'       => 'decimal:2',
-        'pg_request'  => 'array',
-        'pg_response' => 'array',
-        'expired_at'  => 'datetime',
-        'paid_at'     => 'datetime',
+        'price'           => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'original_price'  => 'decimal:2',
+        'pg_request'      => 'array',
+        'pg_response'     => 'array',
+        'expired_at'      => 'datetime',
+        'paid_at'         => 'datetime',
     ];
 
     // -------------------------------------------------------------------------
@@ -134,5 +140,10 @@ class PaymentTransaction extends Model
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class, 'invoice', 'invoice');
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 }

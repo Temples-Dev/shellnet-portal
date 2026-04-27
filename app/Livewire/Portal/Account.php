@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Portal;
 
+use App\Models\PaymentTransaction;
 use App\Models\Subscription;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -24,11 +25,11 @@ class Account extends Component
     }
 
     #[Computed]
-    public function recentSubscriptions(): \Illuminate\Database\Eloquent\Collection
+    public function paymentTransactions(): \Illuminate\Database\Eloquent\Collection
     {
-        return Subscription::where('customer_id', $this->customer->id)
+        return PaymentTransaction::where('customer_id', $this->customer->id)
             ->latest()
-            ->limit(5)
+            ->limit(10)
             ->get();
     }
 

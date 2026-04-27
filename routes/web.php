@@ -26,7 +26,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // -----------------------------------------------------------------------
     Route::prefix('customers')->name('customers.')->group(function () {
         Route::view('/', 'pages.customers.index')->name('index');
-        Route::view('/map', 'pages.customers.map')->name('map');
         Route::view('/{id}', 'pages.customers.show')->name('show');
     });
 

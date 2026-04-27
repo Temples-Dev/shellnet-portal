@@ -14,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RequireRole::class,
         ]);
+
+        $middleware->redirectGuestsTo(fn ($request) =>
+            str_starts_with($request->path(), 'portal')
+                ? route('portal.login')
+                : route('login')
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

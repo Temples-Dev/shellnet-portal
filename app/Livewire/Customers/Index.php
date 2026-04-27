@@ -18,22 +18,24 @@ class Index extends Component
     public string $sortDirection = 'desc';
 
     // Create form fields
-    public string $createUsername = '';
-    public string $createFullname = '';
-    public string $createEmail = '';
-    public string $createPhone = '';
-    public string $createPassword = '';
+    public string $createUsername    = '';
+    public string $createFullname    = '';
+    public string $createEmail       = '';
+    public string $createPhone       = '';
+    public string $createPassword    = '';
+    public string $createMacAddress  = '';
     public string $createServiceType = 'Hotspot';
-    public string $createStatus = 'Active';
+    public string $createStatus      = 'Active';
 
     // Edit form fields
-    public ?int $editingId = null;
-    public string $editUsername = '';
-    public string $editFullname = '';
-    public string $editEmail = '';
-    public string $editPhone = '';
-    public string $editServiceType = '';
-    public string $editStatus = '';
+    public ?int   $editingId        = null;
+    public string $editUsername     = '';
+    public string $editFullname     = '';
+    public string $editEmail        = '';
+    public string $editPhone        = '';
+    public string $editMacAddress   = '';
+    public string $editServiceType  = '';
+    public string $editStatus       = '';
 
     // Delete confirm
     public ?int $deletingId = null;
@@ -83,7 +85,8 @@ class Index extends Component
             'createEmail'       => 'nullable|email|max:128|unique:customers,email',
             'createPhone'       => 'nullable|string|max:32',
             'createPassword'    => 'required|string|min:6',
-            'createServiceType' => 'required|in:' . implode(',', Customer::SERVICE_TYPES),
+            'createMacAddress'  => 'nullable|regex:/^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/',
+            'createServiceType' => 'required|in:Hotspot',
             'createStatus'      => 'required|in:' . implode(',', Customer::STATUSES),
         ]);
 
@@ -93,6 +96,7 @@ class Index extends Component
             'email'        => $this->createEmail ?: null,
             'phone'        => $this->createPhone ?: null,
             'password'     => bcrypt($this->createPassword),
+            'mac_address'  => $this->createMacAddress ? strtoupper($this->createMacAddress) : null,
             'service_type' => $this->createServiceType,
             'status'       => $this->createStatus,
         ]);
@@ -113,6 +117,7 @@ class Index extends Component
         $this->editFullname   = $c->fullname;
         $this->editEmail      = $c->email ?? '';
         $this->editPhone      = $c->phone ?? '';
+        $this->editMacAddress  = $c->mac_address ?? '';
         $this->editServiceType = $c->service_type;
         $this->editStatus     = $c->status;
         $this->resetErrorBag();
@@ -126,7 +131,8 @@ class Index extends Component
             'editFullname'    => 'required|string|max:128',
             'editEmail'       => 'nullable|email|max:128|unique:customers,email,' . $this->editingId,
             'editPhone'       => 'nullable|string|max:32',
-            'editServiceType' => 'required|in:' . implode(',', Customer::SERVICE_TYPES),
+            'editMacAddress'  => 'nullable|regex:/^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/',
+            'editServiceType' => 'required|in:Hotspot',
             'editStatus'      => 'required|in:' . implode(',', Customer::STATUSES),
         ]);
 
@@ -135,6 +141,7 @@ class Index extends Component
             'fullname'     => $this->editFullname,
             'email'        => $this->editEmail ?: null,
             'phone'        => $this->editPhone ?: null,
+            'mac_address'  => $this->editMacAddress ? strtoupper($this->editMacAddress) : null,
             'service_type' => $this->editServiceType,
             'status'       => $this->editStatus,
         ]);
@@ -176,6 +183,7 @@ class Index extends Component
         $this->createEmail       = '';
         $this->createPhone       = '';
         $this->createPassword    = '';
+        $this->createMacAddress  = '';
         $this->createServiceType = 'Hotspot';
         $this->createStatus      = 'Active';
     }

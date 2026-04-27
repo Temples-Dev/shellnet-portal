@@ -17,7 +17,7 @@ class Plan extends Model
      *
      * @var list<string>
      */
-    public const TYPES = ['Hotspot', 'PPPoE', 'Balance', 'VPN'];
+    public const TYPES = ['Hotspot'];
 
     /**
      * Supported validity period units.

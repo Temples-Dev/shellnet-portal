@@ -25,6 +25,8 @@ class PaystackService
     /**
      * Create a Paystack payment session and return the authorization URL.
      *
+     * @param  float|null  $overrideAmount  Charged amount (post-discount). Defaults to plan price.
+     * @param  array       $extraMetadata   Merged into transaction metadata (e.g. coupon_id).
      * @return array{authorization_url: string, access_code: string, reference: string}
      * @throws \RuntimeException
      */
@@ -32,25 +34,29 @@ class PaystackService
         Customer $customer,
         Plan $plan,
         string $callbackUrl,
-        ?string $reference = null
+        ?string $reference = null,
+        ?float $overrideAmount = null,
+        array $extraMetadata = []
     ): array {
         $reference ??= 'PS-' . strtoupper(Str::random(12));
 
         $email = $customer->email
             ?? preg_replace('/\D/', '', $customer->phone ?? '') . '@customers.shellnet.app';
 
+        $amount = $overrideAmount ?? (float) $plan->price;
+
         $response = $this->post('/transaction/initialize', [
             'email'        => $email,
-            'amount'       => (int) round($plan->price * 100),
+            'amount'       => (int) round($amount * 100),
             'currency'     => config('services.paystack.currency', 'GHS'),
             'reference'    => $reference,
             'callback_url' => $callbackUrl,
-            'metadata'     => [
+            'metadata'     => array_merge([
                 'customer_id' => $customer->id,
                 'plan_id'     => $plan->id,
                 'plan_name'   => $plan->name,
                 'username'    => $customer->username,
-            ],
+            ], $extraMetadata),
         ]);
 
         if (! $response->successful() || ! $response->json('status')) {

@@ -28,6 +28,7 @@ class Plans extends Component
     public string $fValidityUnit = 'Days';
     public bool   $fEnabled = true;
     public bool   $fPrepaid = true;
+    public int    $fSharedUsers = 1;
 
     public ?int $editingId = null;
     public ?int $deletingId = null;
@@ -92,6 +93,7 @@ class Plans extends Component
         $this->fValidityUnit  = $p->validity_unit;
         $this->fEnabled       = (bool) $p->enabled;
         $this->fPrepaid       = (bool) $p->prepaid;
+        $this->fSharedUsers   = (int) $p->shared_users;
         $this->resetErrorBag();
         $this->modal('plan-form')->show();
     }
@@ -105,7 +107,8 @@ class Plans extends Component
             'fBandwidthId'  => 'nullable|exists:bandwidths,id',
             'fRouterId'     => 'nullable|exists:routers,id',
             'fValidity'     => 'required|integer|min:1',
-            'fValidityUnit' => 'required|in:' . implode(',', Plan::VALIDITY_UNITS),
+            'fValidityUnit'  => 'required|in:' . implode(',', Plan::VALIDITY_UNITS),
+            'fSharedUsers'   => 'required|integer|min:1|max:10',
         ]);
 
         $data = [
@@ -118,18 +121,18 @@ class Plans extends Component
             'validity_unit' => $this->fValidityUnit,
             'enabled'       => $this->fEnabled,
             'prepaid'       => $this->fPrepaid,
+            'shared_users'  => $this->fSharedUsers,
         ];
 
         if ($this->editingId) {
             Plan::findOrFail($this->editingId)->update($data);
         } else {
             Plan::create(array_merge($data, [
-                'is_limited'  => false,
-                'limit_type'  => 'Time_Limit',
-                'shared_users' => 1,
-                'is_radius'   => false,
-                'plan_type'   => 'Personal',
-                'device'      => 'mikrotik',
+                'is_limited' => false,
+                'limit_type' => 'Time_Limit',
+                'is_radius'  => false,
+                'plan_type'  => 'Personal',
+                'device'     => 'mikrotik',
             ]));
         }
 
@@ -181,6 +184,7 @@ class Plans extends Component
         $this->fValidityUnit = 'Days';
         $this->fEnabled      = true;
         $this->fPrepaid      = true;
+        $this->fSharedUsers  = 1;
     }
 
     public function render(): \Illuminate\Contracts\View\View

@@ -1,4 +1,10 @@
 <flux:main>
+    @if(session('routerWarning'))
+        <div class="mb-4 rounded-lg border border-yellow-500/20 bg-yellow-950/30 px-4 py-3 text-sm text-yellow-400">
+            {{ session('routerWarning') }}
+        </div>
+    @endif
+
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
             <flux:heading size="xl">Vouchers</flux:heading>
@@ -40,7 +46,7 @@
                 <flux:table.row :key="$v->id" wire:key="v-{{ $v->id }}">
                     <flux:table.cell class="font-mono font-medium tracking-wider text-zinc-700 dark:text-zinc-200">{{ $v->code }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" :color="match($v->type) { 'Hotspot' => 'blue', 'PPPoE' => 'purple', default => 'zinc' }">{{ $v->type }}</flux:badge>
+                        <flux:badge size="sm" color="blue">{{ $v->type }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell class="text-zinc-500">{{ $v->plan?->name ?? '—' }}</flux:table.cell>
                     <flux:table.cell>
@@ -92,8 +98,6 @@
                     <flux:label>Type</flux:label>
                     <flux:select wire:model="genType">
                         <flux:select.option value="Hotspot">Hotspot</flux:select.option>
-                        <flux:select.option value="PPPoE">PPPoE</flux:select.option>
-                        <flux:select.option value="VPN">VPN</flux:select.option>
                     </flux:select>
                 </flux:field>
                 <flux:field>

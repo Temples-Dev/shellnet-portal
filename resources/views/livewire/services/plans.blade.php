@@ -38,13 +38,7 @@
                 <flux:table.row :key="$plan->id" wire:key="plan-{{ $plan->id }}">
                     <flux:table.cell variant="strong">{{ $plan->name }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" :color="match($plan->type) {
-                            'Hotspot' => 'blue',
-                            'PPPoE'   => 'purple',
-                            'VPN'     => 'cyan',
-                            'Balance' => 'green',
-                            default   => 'zinc',
-                        }">{{ $plan->type }}</flux:badge>
+                        <flux:badge size="sm" color="blue">{{ $plan->type }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell variant="strong">₵{{ number_format($plan->price, 2) }}</flux:table.cell>
                     <flux:table.cell class="text-zinc-500">{{ $plan->validity }} {{ $plan->validity_unit }}</flux:table.cell>
@@ -134,6 +128,11 @@
                     </flux:select>
                 </flux:field>
             </div>
+            <flux:field>
+                <flux:label>Max Devices <flux:error name="fSharedUsers" /></flux:label>
+                <flux:input wire:model="fSharedUsers" type="number" min="1" max="10" />
+                <flux:description>Simultaneous connections allowed per account (1 = no sharing)</flux:description>
+            </flux:field>
             <div class="flex gap-6 pt-1">
                 <flux:checkbox wire:model="fEnabled" label="Enabled" />
                 <flux:checkbox wire:model="fPrepaid" label="Prepaid" />

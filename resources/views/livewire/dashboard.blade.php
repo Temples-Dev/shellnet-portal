@@ -147,7 +147,7 @@
                                 labels: @js($this->planDistribution['labels']),
                                 datasets: [{
                                     data: @js($this->planDistribution['data']),
-                                    backgroundColor: ['#3b82f6','#10b981','#f59e0b','#8b5cf6'],
+                                    backgroundColor: ['#3b82f6'],
                                     borderWidth: 0,
                                     hoverOffset: 6,
                                 }]
@@ -180,6 +180,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Live Sessions --}}
+    <livewire:live-sessions />
 
     {{-- Recent Transactions --}}
     <div class="mt-6 rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">

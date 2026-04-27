@@ -45,7 +45,7 @@
 
         <p class="mt-5 text-center text-sm text-zinc-500">
             New customer?
-            <a href="{{ route('portal.index') }}" class="text-blue-400 hover:text-blue-300 transition-colors">Browse plans</a>
+            <a href="{{ route('portal.register') }}" class="text-blue-400 hover:text-blue-300 transition-colors">Create an account</a>
             to get started.
         </p>
     </div>

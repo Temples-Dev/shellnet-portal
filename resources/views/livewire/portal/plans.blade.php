@@ -1,15 +1,4 @@
 <div>
-    @if(count($this->availableTypes) > 1)
-        <div class="mb-6 flex gap-2">
-            @foreach($this->availableTypes as $t)
-                <button
-                    wire:click="$set('type', '{{ $t }}')"
-                    class="rounded-full border px-4 py-1.5 text-sm font-medium transition-all {{ $type === $t ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200' }}"
-                >{{ $t }}</button>
-            @endforeach
-        </div>
-    @endif
-
     @if($this->plans->isEmpty())
         <div class="rounded-xl border border-dashed border-zinc-800 py-20 text-center">
             <flux:icon.signal class="mx-auto mb-3 size-10 text-zinc-700" />
@@ -25,23 +14,40 @@
                                 <h3 class="font-semibold text-white">{{ $plan->name }}</h3>
                                 <p class="mt-0.5 text-xs text-zinc-500">{{ $plan->validityLabel }}</p>
                             </div>
-                            <span class="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400 border border-blue-500/20">{{ $plan->type }}</span>
+                            <span class="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400 border border-blue-500/20">Hotspot</span>
                         </div>
 
-                        @if($plan->speed_down || $plan->speed_up)
-                            <div class="mt-3 flex gap-3 text-xs text-zinc-500">
-                                @if($plan->speed_down)
-                                    <span class="flex items-center gap-1">
-                                        <span class="text-zinc-400">↓</span> {{ $plan->speed_down }} Mbps
-                                    </span>
-                                @endif
-                                @if($plan->speed_up)
-                                    <span class="flex items-center gap-1">
-                                        <span class="text-zinc-400">↑</span> {{ $plan->speed_up }} Mbps
-                                    </span>
-                                @endif
-                            </div>
-                        @endif
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            @if($plan->speed_down || $plan->speed_up)
+                                <span class="flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
+                                    <svg class="size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/></svg>
+                                    @if($plan->speed_down && $plan->speed_up)
+                                        {{ $plan->speed_down }}↓ / {{ $plan->speed_up }}↑ Mbps
+                                    @elseif($plan->speed_down)
+                                        {{ $plan->speed_down }} Mbps
+                                    @else
+                                        {{ $plan->speed_up }} Mbps
+                                    @endif
+                                </span>
+                            @endif
+
+                            @if(($plan->shared_users ?? 1) === 1)
+                                <span class="flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
+                                    <svg class="size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg>
+                                    1 Device only
+                                </span>
+                            @else
+                                <span class="flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-xs text-blue-400 border border-blue-500/20">
+                                    <svg class="size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg>
+                                    Up to {{ $plan->shared_users }} Devices
+                                </span>
+                            @endif
+
+                            <span class="flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
+                                <svg class="size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                                Unlimited data
+                            </span>
+                        </div>
                     </div>
 
                     <div class="border-t border-zinc-800 px-5 py-4">

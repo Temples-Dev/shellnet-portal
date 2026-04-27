@@ -33,11 +33,13 @@
             <flux:table.column>Customer</flux:table.column>
             <flux:table.column>Plan</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'price'" :direction="$sortDirection" wire:click="sort('price')">Amount</flux:table.column>
+            <flux:table.column>Coupon</flux:table.column>
             <flux:table.column>Method</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection" wire:click="sort('created_at')">Date</flux:table.column>
         </flux:table.columns>
         <flux:table.rows>
             @forelse($this->transactions as $tx)
+                @php $pt = $tx->paymentTransaction; @endphp
                 <flux:table.row :key="$tx->id" wire:key="tx-{{ $tx->id }}">
                     <flux:table.cell class="font-mono text-xs text-zinc-500">{{ $tx->invoice }}</flux:table.cell>
                     <flux:table.cell>
@@ -52,7 +54,26 @@
                         @endif
                     </flux:table.cell>
                     <flux:table.cell class="text-zinc-600 dark:text-zinc-300">{{ $tx->plan_name }}</flux:table.cell>
-                    <flux:table.cell variant="strong">₵{{ number_format($tx->price, 2) }}</flux:table.cell>
+                    <flux:table.cell>
+                        @if($pt && (float) $pt->discount_amount > 0)
+                            <div class="leading-tight">
+                                <p class="font-semibold text-zinc-900 dark:text-white">₵{{ number_format((float) $pt->price, 2) }}</p>
+                                <p class="text-xs text-zinc-400 line-through">₵{{ number_format((float) $pt->original_price, 2) }}</p>
+                            </div>
+                        @else
+                            <span class="font-semibold">₵{{ number_format($tx->price, 2) }}</span>
+                        @endif
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        @if($pt?->coupon)
+                            <div class="leading-tight">
+                                <span class="font-mono text-xs font-semibold text-green-600 dark:text-green-400">{{ $pt->coupon->code }}</span>
+                                <p class="text-xs text-zinc-400">− ₵{{ number_format((float) $pt->discount_amount, 2) }}</p>
+                            </div>
+                        @else
+                            <span class="text-zinc-400">—</span>
+                        @endif
+                    </flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" :color="match($tx->method) {
                             'paystack' => 'green',
@@ -68,7 +89,7 @@
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6" class="py-12 text-center text-zinc-400">No transactions found</flux:table.cell>
+                    <flux:table.cell colspan="7" class="py-12 text-center text-zinc-400">No transactions found</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

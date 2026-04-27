@@ -19,9 +19,6 @@
                     <flux:sidebar.item icon="users" :href="route('customers.index')" :current="request()->routeIs('customers.*')" wire:navigate>
                         {{ __('All Customers') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="map-pin" :href="route('customers.map')" :current="request()->routeIs('customers.map')" wire:navigate>
-                        {{ __('Map') }}
-                    </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Billing')" class="grid">
