@@ -21,12 +21,12 @@ class PlanAssignedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Plan Has Been Activated — ' . config('app.name'))
-            ->greeting('Hello ' . $notifiable->fullname . ',')
+            ->subject('Your Plan Has Been Activated — '.config('app.name'))
+            ->greeting('Hello '.$notifiable->fullname.',')
             ->line("Your **{$this->subscription->plan_name}** plan has been activated.")
-            ->line("**Expires:** " . $this->subscription->expires_at?->format('d M Y'))
-            ->line("**Router:** " . $this->subscription->router_name)
+            ->line('**Expires:** '.$this->subscription->expires_at?->format('d M Y'))
+            ->line('**Router:** '.$this->subscription->router_name)
             ->action('View Your Account', url('/'))
-            ->line('Thank you for choosing ' . config('app.name') . '!');
+            ->line('Thank you for choosing '.config('app.name').'!');
     }
 }

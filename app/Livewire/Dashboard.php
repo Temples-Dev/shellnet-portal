@@ -6,6 +6,8 @@ use App\Models\Plan;
 use App\Models\Router;
 use App\Models\Subscription;
 use App\Models\Transaction;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -38,7 +40,7 @@ class Dashboard extends Component
     }
 
     #[Computed]
-    public function recentTransactions(): \Illuminate\Database\Eloquent\Collection
+    public function recentTransactions(): Collection
     {
         return Transaction::with('customer')
             ->latest()
@@ -50,7 +52,7 @@ class Dashboard extends Component
     public function monthlyRevenue(): array
     {
         $months = collect(range(11, 0))->map(function (int $i): array {
-            $date  = now()->subMonths($i);
+            $date = now()->subMonths($i);
             $total = Transaction::whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('price');
@@ -60,7 +62,7 @@ class Dashboard extends Component
 
         return [
             'labels' => $months->pluck('label')->toArray(),
-            'data'   => $months->pluck('value')->toArray(),
+            'data' => $months->pluck('value')->toArray(),
         ];
     }
 
@@ -74,12 +76,12 @@ class Dashboard extends Component
             ->pluck('total', 'plans.type');
 
         $labels = Plan::TYPES;
-        $data   = array_map(fn (string $t): int => (int) ($counts[$t] ?? 0), $labels);
+        $data = array_map(fn (string $t): int => (int) ($counts[$t] ?? 0), $labels);
 
         return ['labels' => $labels, 'data' => $data];
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.dashboard');
     }

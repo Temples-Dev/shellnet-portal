@@ -5,6 +5,8 @@ namespace App\Livewire\Reports;
 use App\Models\Customer;
 use App\Models\Subscription;
 use App\Models\Transaction;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -14,13 +16,13 @@ class Overview extends Component
     public function stats(): array
     {
         return [
-            'total_customers'      => Customer::count(),
-            'active_customers'     => Customer::where('status', 'Active')->count(),
+            'total_customers' => Customer::count(),
+            'active_customers' => Customer::where('status', 'Active')->count(),
             'active_subscriptions' => Subscription::where('status', 'on')->count(),
-            'revenue_today'        => (float) Transaction::whereDate('created_at', today())->sum('price'),
-            'revenue_month'        => (float) Transaction::whereMonth('created_at', now()->month)
-                                        ->whereYear('created_at', now()->year)->sum('price'),
-            'revenue_total'        => (float) Transaction::sum('price'),
+            'revenue_today' => (float) Transaction::whereDate('created_at', today())->sum('price'),
+            'revenue_month' => (float) Transaction::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)->sum('price'),
+            'revenue_total' => (float) Transaction::sum('price'),
         ];
     }
 
@@ -28,7 +30,7 @@ class Overview extends Component
     public function monthlyRevenue(): array
     {
         $months = collect(range(5, 0))->map(function (int $i) {
-            $date  = now()->subMonths($i);
+            $date = now()->subMonths($i);
             $total = (float) Transaction::whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('price');
@@ -38,12 +40,12 @@ class Overview extends Component
 
         return [
             'labels' => $months->pluck('label')->all(),
-            'data'   => $months->pluck('total')->all(),
+            'data' => $months->pluck('total')->all(),
         ];
     }
 
     #[Computed]
-    public function topPlans(): \Illuminate\Database\Eloquent\Collection
+    public function topPlans(): Collection
     {
         return Transaction::selectRaw('plan_name, COUNT(*) as count, SUM(price) as revenue')
             ->groupBy('plan_name')
@@ -57,14 +59,14 @@ class Overview extends Component
     {
         return [
             'labels' => ['Active', 'Expired'],
-            'data'   => [
+            'data' => [
                 Subscription::where('status', 'on')->count(),
                 Subscription::where('status', 'expired')->count(),
             ],
         ];
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.reports.overview');
     }

@@ -20,7 +20,8 @@ class User extends Authenticatable
     // -------------------------------------------------------------------------
 
     public const USER_TYPES = ['SuperAdmin', 'Admin', 'Report', 'Agent', 'Sales'];
-    public const STATUSES    = ['Active', 'Inactive'];
+
+    public const STATUSES = ['Active', 'Inactive'];
 
     // -------------------------------------------------------------------------
     // Mass-assignment / hidden
@@ -69,11 +70,11 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at'        => 'datetime',
-            'two_factor_confirmed_at'  => 'datetime',
-            'last_login'               => 'datetime',
-            'data'                     => 'array',
-            'password'                 => 'hashed',
+            'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
+            'last_login' => 'datetime',
+            'data' => 'array',
+            'password' => 'hashed',
         ];
     }
 

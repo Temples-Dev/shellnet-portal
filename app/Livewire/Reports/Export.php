@@ -5,32 +5,37 @@ namespace App\Livewire\Reports;
 use App\Models\Customer;
 use App\Models\Subscription;
 use App\Models\Transaction;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Export extends Component
 {
-    public string $entity       = 'transactions';
-    public string $dateFrom     = '';
-    public string $dateTo       = '';
+    public string $entity = 'transactions';
+
+    public string $dateFrom = '';
+
+    public string $dateTo = '';
+
     public string $statusFilter = '';
 
     public const ENTITIES = [
-        'transactions'  => 'Transactions',
-        'customers'     => 'Customers',
+        'transactions' => 'Transactions',
+        'customers' => 'Customers',
         'subscriptions' => 'Subscriptions',
     ];
 
     public function export(): mixed
     {
         $this->validate([
-            'entity'   => 'required|in:transactions,customers,subscriptions',
+            'entity' => 'required|in:transactions,customers,subscriptions',
             'dateFrom' => 'nullable|date',
-            'dateTo'   => 'nullable|date|after_or_equal:dateFrom',
+            'dateTo' => 'nullable|date|after_or_equal:dateFrom',
         ]);
 
         return match ($this->entity) {
-            'transactions'  => $this->exportTransactions(),
-            'customers'     => $this->exportCustomers(),
+            'transactions' => $this->exportTransactions(),
+            'customers' => $this->exportCustomers(),
             'subscriptions' => $this->exportSubscriptions(),
         };
     }
@@ -39,12 +44,12 @@ class Export extends Component
     {
         $rows = Transaction::with('customer')
             ->when($this->dateFrom, fn ($q) => $q->whereDate('created_at', '>=', $this->dateFrom))
-            ->when($this->dateTo,   fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
+            ->when($this->dateTo, fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
             ->orderByDesc('created_at')
             ->get();
 
         $headers = ['Invoice', 'Customer', 'Username', 'Plan', 'Amount', 'Method', 'Date'];
-        $data    = $rows->map(fn ($r) => [
+        $data = $rows->map(fn ($r) => [
             $r->invoice,
             $r->customer?->fullname ?? '',
             $r->username,
@@ -61,12 +66,12 @@ class Export extends Component
     {
         $rows = Customer::when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
             ->when($this->dateFrom, fn ($q) => $q->whereDate('created_at', '>=', $this->dateFrom))
-            ->when($this->dateTo,   fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
+            ->when($this->dateTo, fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
             ->orderByDesc('created_at')
             ->get();
 
         $headers = ['ID', 'Full Name', 'Username', 'Email', 'Phone', 'Service', 'Status', 'Created'];
-        $data    = $rows->map(fn ($r) => [
+        $data = $rows->map(fn ($r) => [
             $r->id,
             $r->fullname,
             $r->username,
@@ -84,12 +89,12 @@ class Export extends Component
     {
         $rows = Subscription::with('customer', 'plan')
             ->when($this->dateFrom, fn ($q) => $q->whereDate('created_at', '>=', $this->dateFrom))
-            ->when($this->dateTo,   fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
+            ->when($this->dateTo, fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo))
             ->orderByDesc('created_at')
             ->get();
 
         $headers = ['ID', 'Customer', 'Username', 'Plan', 'Status', 'Recharged At', 'Expires At'];
-        $data    = $rows->map(fn ($r) => [
+        $data = $rows->map(fn ($r) => [
             $r->id,
             $r->customer?->fullname ?? '',
             $r->username,
@@ -102,9 +107,9 @@ class Export extends Component
         return $this->streamCsv('subscriptions', $headers, $data);
     }
 
-    private function streamCsv(string $name, array $headers, \Illuminate\Support\Collection $rows): mixed
+    private function streamCsv(string $name, array $headers, Collection $rows): mixed
     {
-        $filename = $name . '-' . date('Ymd-His') . '.csv';
+        $filename = $name.'-'.date('Ymd-His').'.csv';
 
         return response()->streamDownload(function () use ($headers, $rows) {
             $fp = fopen('php://output', 'w');
@@ -116,7 +121,7 @@ class Export extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.reports.export');
     }

@@ -3,6 +3,7 @@
 namespace App\Livewire\Reports;
 
 use App\Models\ActivityLog;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,14 +13,32 @@ class Logs extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $typeFilter = '';
+
     public string $dateFrom = '';
+
     public string $dateTo = '';
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedTypeFilter(): void { $this->resetPage(); }
-    public function updatedDateFrom(): void { $this->resetPage(); }
-    public function updatedDateTo(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateTo(): void
+    {
+        $this->resetPage();
+    }
 
     #[Computed]
     public function logs()
@@ -39,7 +58,7 @@ class Logs extends Component
         return ActivityLog::distinct()->orderBy('type')->pluck('type')->toArray();
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.reports.logs');
     }

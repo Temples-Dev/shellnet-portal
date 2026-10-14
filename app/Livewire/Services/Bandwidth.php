@@ -3,6 +3,7 @@
 namespace App\Livewire\Services;
 
 use App\Models\Bandwidth as BandwidthModel;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,19 +15,29 @@ class Bandwidth extends Component
     public string $search = '';
 
     public string $fName = '';
-    public int    $fRateDown = 10;
+
+    public int $fRateDown = 10;
+
     public string $fRateDownUnit = 'Mbps';
-    public int    $fRateUp = 5;
+
+    public int $fRateUp = 5;
+
     public string $fRateUpUnit = 'Mbps';
+
     public string $fBurst = '';
 
     public ?int $editingId = null;
+
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
     private const UNITS = ['Kbps', 'Mbps', 'Gbps'];
 
-    public function updatedSearch(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
     #[Computed]
     public function bandwidths()
@@ -37,7 +48,10 @@ class Bandwidth extends Component
             ->paginate(15);
     }
 
-    public function units(): array { return self::UNITS; }
+    public function units(): array
+    {
+        return self::UNITS;
+    }
 
     public function openCreate(): void
     {
@@ -50,13 +64,13 @@ class Bandwidth extends Component
     public function openEdit(int $id): void
     {
         $bw = BandwidthModel::findOrFail($id);
-        $this->editingId     = $id;
-        $this->fName         = $bw->name;
-        $this->fRateDown     = $bw->rate_down;
+        $this->editingId = $id;
+        $this->fName = $bw->name;
+        $this->fRateDown = $bw->rate_down;
         $this->fRateDownUnit = $bw->rate_down_unit;
-        $this->fRateUp       = $bw->rate_up;
-        $this->fRateUpUnit   = $bw->rate_up_unit;
-        $this->fBurst        = $bw->burst ?? '';
+        $this->fRateUp = $bw->rate_up;
+        $this->fRateUpUnit = $bw->rate_up_unit;
+        $this->fBurst = $bw->burst ?? '';
         $this->resetErrorBag();
         $this->modal('bw-form')->show();
     }
@@ -64,20 +78,20 @@ class Bandwidth extends Component
     public function save(): void
     {
         $this->validate([
-            'fName'         => 'required|string|max:64',
-            'fRateDown'     => 'required|integer|min:1',
-            'fRateDownUnit' => 'required|in:' . implode(',', self::UNITS),
-            'fRateUp'       => 'required|integer|min:1',
-            'fRateUpUnit'   => 'required|in:' . implode(',', self::UNITS),
+            'fName' => 'required|string|max:64',
+            'fRateDown' => 'required|integer|min:1',
+            'fRateDownUnit' => 'required|in:'.implode(',', self::UNITS),
+            'fRateUp' => 'required|integer|min:1',
+            'fRateUpUnit' => 'required|in:'.implode(',', self::UNITS),
         ]);
 
         $data = [
-            'name'           => $this->fName,
-            'rate_down'      => $this->fRateDown,
+            'name' => $this->fName,
+            'rate_down' => $this->fRateDown,
             'rate_down_unit' => $this->fRateDownUnit,
-            'rate_up'        => $this->fRateUp,
-            'rate_up_unit'   => $this->fRateUpUnit,
-            'burst'          => $this->fBurst ?: null,
+            'rate_up' => $this->fRateUp,
+            'rate_up_unit' => $this->fRateUpUnit,
+            'burst' => $this->fBurst ?: null,
         ];
 
         $this->editingId
@@ -92,7 +106,7 @@ class Bandwidth extends Component
     public function confirmDelete(int $id): void
     {
         $bw = BandwidthModel::findOrFail($id);
-        $this->deletingId   = $id;
+        $this->deletingId = $id;
         $this->deletingName = $bw->name;
         $this->modal('bw-delete')->show();
     }
@@ -108,15 +122,15 @@ class Bandwidth extends Component
 
     private function resetForm(): void
     {
-        $this->fName         = '';
-        $this->fRateDown     = 10;
+        $this->fName = '';
+        $this->fRateDown = 10;
         $this->fRateDownUnit = 'Mbps';
-        $this->fRateUp       = 5;
-        $this->fRateUpUnit   = 'Mbps';
-        $this->fBurst        = '';
+        $this->fRateUp = 5;
+        $this->fRateUpUnit = 'Mbps';
+        $this->fBurst = '';
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.services.bandwidth');
     }

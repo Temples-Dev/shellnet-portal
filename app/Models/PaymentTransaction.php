@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Coupon;
 
 class PaymentTransaction extends Model
 {
@@ -20,9 +19,12 @@ class PaymentTransaction extends Model
     // Status constants
     // -------------------------------------------------------------------------
 
-    public const STATUS_UNPAID   = 1;
-    public const STATUS_PAID     = 2;
-    public const STATUS_FAILED   = 3;
+    public const STATUS_UNPAID = 1;
+
+    public const STATUS_PAID = 2;
+
+    public const STATUS_FAILED = 3;
+
     public const STATUS_CANCELED = 4;
 
     /**
@@ -62,13 +64,13 @@ class PaymentTransaction extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'price'           => 'decimal:2',
+        'price' => 'decimal:2',
         'discount_amount' => 'decimal:2',
-        'original_price'  => 'decimal:2',
-        'pg_request'      => 'array',
-        'pg_response'     => 'array',
-        'expired_at'      => 'datetime',
-        'paid_at'         => 'datetime',
+        'original_price' => 'decimal:2',
+        'pg_request' => 'array',
+        'pg_response' => 'array',
+        'expired_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     // -------------------------------------------------------------------------
@@ -93,10 +95,10 @@ class PaymentTransaction extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ((int) $this->status) {
-            self::STATUS_PAID     => 'Paid',
-            self::STATUS_FAILED   => 'Failed',
+            self::STATUS_PAID => 'Paid',
+            self::STATUS_FAILED => 'Failed',
             self::STATUS_CANCELED => 'Canceled',
-            default               => 'Unpaid',
+            default => 'Unpaid',
         };
     }
 

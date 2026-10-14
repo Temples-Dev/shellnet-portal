@@ -44,7 +44,7 @@ class Setting extends Model
     public static function set(string $key, mixed $value): void
     {
         static::updateOrCreate(
-            ['key'   => $key],
+            ['key' => $key],
             ['value' => $value],
         );
     }

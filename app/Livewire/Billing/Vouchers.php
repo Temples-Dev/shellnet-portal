@@ -6,6 +6,7 @@ use App\Models\Plan;
 use App\Models\Router;
 use App\Models\Voucher;
 use App\Services\RouterOS\RouterOSClientFactory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -17,14 +18,19 @@ class Vouchers extends Component
 {
     use WithPagination;
 
-    public string $search       = '';
+    public string $search = '';
+
     public string $statusFilter = '';
-    public string $planFilter   = '';
+
+    public string $planFilter = '';
 
     // Generate form
-    public int    $genCount    = 10;
-    public string $genPlanId   = '';
-    public string $genType     = 'Hotspot';
+    public int $genCount = 10;
+
+    public string $genPlanId = '';
+
+    public string $genType = 'Hotspot';
+
     public string $genRouterId = '';
 
     #[Computed]
@@ -54,36 +60,36 @@ class Vouchers extends Component
     {
         $this->reset(['genCount', 'genPlanId', 'genType', 'genRouterId']);
         $this->genCount = 10;
-        $this->genType  = 'Hotspot';
+        $this->genType = 'Hotspot';
         $this->modal('voucher-generate')->show();
     }
 
     public function generate(): void
     {
         $this->validate([
-            'genCount'    => 'required|integer|min:1|max:500',
-            'genPlanId'   => 'required|exists:plans,id',
-            'genType'     => 'required|in:Hotspot',
+            'genCount' => 'required|integer|min:1|max:500',
+            'genPlanId' => 'required|exists:plans,id',
+            'genType' => 'required|in:Hotspot',
             'genRouterId' => 'nullable|exists:routers,id',
         ]);
 
-        $plan     = Plan::with('router')->find($this->genPlanId);
+        $plan = Plan::with('router')->find($this->genPlanId);
         $routerId = $this->genRouterId ?: $plan?->router_id;
-        $router   = $routerId ? Router::find($routerId) : null;
+        $router = $routerId ? Router::find($routerId) : null;
 
-        $now   = now();
+        $now = now();
         $codes = [];
 
         for ($i = 0; $i < $this->genCount; $i++) {
             $codes[] = [
-                'code'         => strtoupper(Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4)),
-                'type'         => $this->genType,
-                'plan_id'      => $this->genPlanId ?: null,
-                'router_id'    => $routerId ?: null,
-                'status'       => 'unused',
+                'code' => strtoupper(Str::random(4).'-'.Str::random(4).'-'.Str::random(4)),
+                'type' => $this->genType,
+                'plan_id' => $this->genPlanId ?: null,
+                'router_id' => $routerId ?: null,
+                'status' => 'unused',
                 'generated_by' => auth()->id(),
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
@@ -123,9 +129,9 @@ class Vouchers extends Component
         } catch (\Throwable $e) {
             Log::warning('[Vouchers] Router push failed', [
                 'router' => $router->name,
-                'error'  => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
-            session()->flash('routerWarning', "Vouchers saved but could not be pushed to router \"{$router->name}\": " . $e->getMessage());
+            session()->flash('routerWarning', "Vouchers saved but could not be pushed to router \"{$router->name}\": ".$e->getMessage());
         }
     }
 
@@ -167,14 +173,25 @@ class Vouchers extends Component
                 fputcsv($fp, $row);
             }
             fclose($fp);
-        }, 'vouchers-' . date('Ymd') . '.csv', ['Content-Type' => 'text/csv']);
+        }, 'vouchers-'.date('Ymd').'.csv', ['Content-Type' => 'text/csv']);
     }
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedStatusFilter(): void { $this->resetPage(); }
-    public function updatedPlanFilter(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function updatedStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPlanFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function render(): View
     {
         return view('livewire.billing.vouchers');
     }

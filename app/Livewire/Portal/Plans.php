@@ -3,13 +3,15 @@
 namespace App\Livewire\Portal;
 
 use App\Models\Plan;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Plans extends Component
 {
     #[Computed]
-    public function plans(): \Illuminate\Database\Eloquent\Collection
+    public function plans(): Collection
     {
         return Plan::enabled()
             ->where('type', 'Hotspot')
@@ -18,7 +20,7 @@ class Plans extends Component
             ->get();
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.portal.plans');
     }

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\LoyaltyCouponNotification;
 use App\Notifications\PlanAssignedNotification;
 use App\Services\RouterOS\RouterOSManager;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -58,27 +59,27 @@ class AssignSubscription
         string $method,
         ?User $admin,
         Customer $customer,
-        \Carbon\CarbonInterface $rechargedAt
+        CarbonInterface $rechargedAt
     ): Subscription {
         // Add validity on top of current expiry (or from now if already expired)
-        $from      = $active->expires_at?->isFuture() ? $active->expires_at : $rechargedAt;
+        $from = $active->expires_at?->isFuture() ? $active->expires_at : $rechargedAt;
         $newExpiry = $this->calculateExpiry($plan, $from);
 
         DB::transaction(function () use ($active, $plan, $method, $admin, $customer, $rechargedAt, $newExpiry): void {
             $active->update(['expires_at' => $newExpiry]);
 
             Transaction::create([
-                'customer_id'  => $customer->id,
-                'username'     => $customer->username,
-                'plan_name'    => $plan->name,
-                'price'        => $plan->price,
-                'type'         => $plan->type,
-                'method'       => $method,
-                'router_id'    => $plan->router_id,
-                'router_name'  => $plan->router?->name ?? '',
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_name' => $plan->name,
+                'price' => $plan->price,
+                'type' => $plan->type,
+                'method' => $method,
+                'router_id' => $plan->router_id,
+                'router_name' => $plan->router?->name ?? '',
                 'recharged_at' => $rechargedAt,
-                'expires_at'   => $newExpiry,
-                'admin_id'     => $admin?->id,
+                'expires_at' => $newExpiry,
+                'admin_id' => $admin?->id,
             ]);
 
             $customer->update(['status' => 'Active']);
@@ -109,7 +110,7 @@ class AssignSubscription
         Plan $plan,
         string $method,
         ?User $admin,
-        \Carbon\CarbonInterface $rechargedAt
+        CarbonInterface $rechargedAt
     ): Subscription {
         $expiresAt = $this->calculateExpiry($plan, $rechargedAt);
 
@@ -119,31 +120,31 @@ class AssignSubscription
             }
 
             $subscription = Subscription::create([
-                'customer_id'  => $customer->id,
-                'plan_id'      => $plan->id,
-                'plan_name'    => $plan->name,
-                'router_id'    => $plan->router_id,
-                'router_name'  => $plan->router?->name ?? '',
-                'type'         => $plan->type,
-                'method'       => $method,
-                'status'       => 'on',
+                'customer_id' => $customer->id,
+                'plan_id' => $plan->id,
+                'plan_name' => $plan->name,
+                'router_id' => $plan->router_id,
+                'router_name' => $plan->router?->name ?? '',
+                'type' => $plan->type,
+                'method' => $method,
+                'status' => 'on',
                 'recharged_at' => $rechargedAt,
-                'expires_at'   => $expiresAt,
-                'admin_id'     => $admin?->id,
+                'expires_at' => $expiresAt,
+                'admin_id' => $admin?->id,
             ]);
 
             Transaction::create([
-                'customer_id'  => $customer->id,
-                'username'     => $customer->username,
-                'plan_name'    => $plan->name,
-                'price'        => $plan->price,
-                'type'         => $plan->type,
-                'method'       => $method,
-                'router_id'    => $plan->router_id,
-                'router_name'  => $plan->router?->name ?? '',
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_name' => $plan->name,
+                'price' => $plan->price,
+                'type' => $plan->type,
+                'method' => $method,
+                'router_id' => $plan->router_id,
+                'router_name' => $plan->router?->name ?? '',
                 'recharged_at' => $rechargedAt,
-                'expires_at'   => $expiresAt,
-                'admin_id'     => $admin?->id,
+                'expires_at' => $expiresAt,
+                'admin_id' => $admin?->id,
             ]);
 
             $customer->update(['status' => 'Active']);
@@ -178,7 +179,7 @@ class AssignSubscription
         } catch (\Throwable $e) {
             Log::error('[AssignSubscription] Router provisioning failed', [
                 'subscription' => $subscription->id,
-                'error'        => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -209,15 +210,15 @@ class AssignSubscription
 
         try {
             $coupon = Coupon::create([
-                'code'        => 'LOYAL-' . strtoupper(Str::random(8)),
+                'code' => 'LOYAL-'.strtoupper(Str::random(8)),
                 'customer_id' => $customer->id,
-                'type'        => 'percent',
-                'value'       => 10,
+                'type' => 'percent',
+                'value' => 10,
                 'description' => "Loyalty reward for {$total} subscriptions",
-                'max_usage'   => 1,
+                'max_usage' => 1,
                 'usage_count' => 0,
-                'status'      => 'active',
-                'expires_at'  => now()->addDays(30)->toDateString(),
+                'status' => 'active',
+                'expires_at' => now()->addDays(30)->toDateString(),
             ]);
 
             $customer->notify(new LoyaltyCouponNotification($coupon, $total));
@@ -226,14 +227,14 @@ class AssignSubscription
         }
     }
 
-    private function calculateExpiry(Plan $plan, \Carbon\CarbonInterface $from): \Carbon\CarbonInterface
+    private function calculateExpiry(Plan $plan, CarbonInterface $from): CarbonInterface
     {
         return match ($plan->validity_unit) {
-            'Mins'   => $from->copy()->addMinutes($plan->validity),
-            'Hrs'    => $from->copy()->addHours($plan->validity),
-            'Days'   => $from->copy()->addDays($plan->validity),
+            'Mins' => $from->copy()->addMinutes($plan->validity),
+            'Hrs' => $from->copy()->addHours($plan->validity),
+            'Days' => $from->copy()->addDays($plan->validity),
             'Months' => $from->copy()->addMonths($plan->validity),
-            default  => $from->copy()->addDays($plan->validity),
+            default => $from->copy()->addDays($plan->validity),
         };
     }
 }

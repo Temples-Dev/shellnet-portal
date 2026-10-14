@@ -34,11 +34,11 @@ class Coupon extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'value'               => 'decimal:2',
-        'min_order_amount'    => 'decimal:2',
+        'value' => 'decimal:2',
+        'min_order_amount' => 'decimal:2',
         'max_discount_amount' => 'decimal:2',
-        'starts_at'           => 'date',
-        'expires_at'          => 'date',
+        'starts_at' => 'date',
+        'expires_at' => 'date',
     ];
 
     // -------------------------------------------------------------------------
@@ -52,17 +52,17 @@ class Coupon extends Model
     public function scopeActive(Builder $query): Builder
     {
         $today = now()->toDateString();
-        $now   = now()->toDateTimeString();
+        $now = now()->toDateTimeString();
 
         return $query->where('status', 'active')
-                     ->where(function (Builder $q) use ($now): void {
-                         $q->whereNull('starts_at')
-                           ->orWhere('starts_at', '<=', $now);
-                     })
-                     ->where(function (Builder $q) use ($today): void {
-                         $q->whereNull('expires_at')
-                           ->orWhere('expires_at', '>=', $today);
-                     });
+            ->where(function (Builder $q) use ($now): void {
+                $q->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $now);
+            })
+            ->where(function (Builder $q) use ($today): void {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>=', $today);
+            });
     }
 
     // -------------------------------------------------------------------------
@@ -114,7 +114,7 @@ class Coupon extends Model
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Customer::class);
+        return $this->belongsTo(Customer::class);
     }
 
     // -------------------------------------------------------------------------
@@ -132,7 +132,7 @@ class Coupon extends Model
      * exceed the original order amount.
      *
      * @param  float  $amount  The order amount before discount.
-     * @return float           The discount amount to deduct.
+     * @return float The discount amount to deduct.
      */
     public function calculateDiscount(float $amount): float
     {

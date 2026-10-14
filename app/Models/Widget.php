@@ -35,9 +35,9 @@ class Widget extends Model
     ];
 
     protected $casts = [
-        'enabled'  => 'boolean',
+        'enabled' => 'boolean',
         'position' => 'integer',
-        'order'    => 'integer',
+        'order' => 'integer',
     ];
 
     // ---------------------------------------------------------------------------

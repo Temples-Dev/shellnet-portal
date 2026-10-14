@@ -5,6 +5,7 @@ namespace App\Livewire\Portal;
 use App\Models\Coupon;
 use App\Models\Plan;
 use App\Models\Subscription;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -12,10 +13,13 @@ class Checkout extends Component
 {
     public Plan $plan;
 
-    public string  $coupon_code    = '';
-    public ?string $couponMessage  = null;
-    public bool    $couponValid    = false;
-    public float   $discountAmount = 0.0;
+    public string $coupon_code = '';
+
+    public ?string $couponMessage = null;
+
+    public bool $couponValid = false;
+
+    public float $discountAmount = 0.0;
 
     public function mount(Plan $plan): void
     {
@@ -24,14 +28,15 @@ class Checkout extends Component
 
     public function applyCoupon(): void
     {
-        $this->couponMessage  = null;
-        $this->couponValid    = false;
+        $this->couponMessage = null;
+        $this->couponValid = false;
         $this->discountAmount = 0.0;
 
         $code = strtoupper(trim($this->coupon_code));
 
         if (blank($code)) {
             $this->couponMessage = 'Enter a coupon code.';
+
             return;
         }
 
@@ -39,30 +44,33 @@ class Checkout extends Component
 
         if (! $coupon || ! $coupon->is_valid) {
             $this->couponMessage = 'Invalid or expired coupon.';
+
             return;
         }
 
         if ($coupon->min_order_amount && $this->plan->price < $coupon->min_order_amount) {
-            $this->couponMessage = 'Minimum order ₵' . number_format((float) $coupon->min_order_amount, 2) . ' required.';
+            $this->couponMessage = 'Minimum order ₵'.number_format((float) $coupon->min_order_amount, 2).' required.';
+
             return;
         }
 
         $customer = auth('customer')->user();
         if ($coupon->customer_id && $coupon->customer_id !== $customer?->id) {
             $this->couponMessage = 'This coupon is not valid for your account.';
+
             return;
         }
 
         $this->discountAmount = $coupon->calculateDiscount((float) $this->plan->price);
-        $this->couponValid    = true;
-        $this->couponMessage  = 'Coupon applied — you save ₵' . number_format($this->discountAmount, 2) . '!';
+        $this->couponValid = true;
+        $this->couponMessage = 'Coupon applied — you save ₵'.number_format($this->discountAmount, 2).'!';
     }
 
     public function removeCoupon(): void
     {
-        $this->coupon_code    = '';
-        $this->couponMessage  = null;
-        $this->couponValid    = false;
+        $this->coupon_code = '';
+        $this->couponMessage = null;
+        $this->couponValid = false;
         $this->discountAmount = 0.0;
     }
 
@@ -74,6 +82,7 @@ class Checkout extends Component
     public function activeSubscription(): ?Subscription
     {
         $customer = auth('customer')->user();
+
         return $customer
             ? Subscription::where('customer_id', $customer->id)->where('status', 'on')->latest()->first()
             : null;
@@ -125,14 +134,14 @@ class Checkout extends Component
         }
 
         $active = $this->activeSubscription;
-        $from   = $active->expires_at?->isFuture() ? $active->expires_at : now();
+        $from = $active->expires_at?->isFuture() ? $active->expires_at : now();
 
         return match ($this->plan->validity_unit) {
-            'Mins'   => $from->copy()->addMinutes($this->plan->validity)->format('d M Y, H:i'),
-            'Hrs'    => $from->copy()->addHours($this->plan->validity)->format('d M Y, H:i'),
-            'Days'   => $from->copy()->addDays($this->plan->validity)->format('d M Y'),
+            'Mins' => $from->copy()->addMinutes($this->plan->validity)->format('d M Y, H:i'),
+            'Hrs' => $from->copy()->addHours($this->plan->validity)->format('d M Y, H:i'),
+            'Days' => $from->copy()->addDays($this->plan->validity)->format('d M Y'),
             'Months' => $from->copy()->addMonths($this->plan->validity)->format('d M Y'),
-            default  => $from->copy()->addDays($this->plan->validity)->format('d M Y'),
+            default => $from->copy()->addDays($this->plan->validity)->format('d M Y'),
         };
     }
 
@@ -142,7 +151,7 @@ class Checkout extends Component
         return max(0.01, (float) $this->plan->price - $this->discountAmount);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.portal.checkout');
     }

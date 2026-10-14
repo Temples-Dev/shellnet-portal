@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Bandwidth extends Model
 {
     use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +31,7 @@ class Bandwidth extends Model
      */
     protected $casts = [
         'rate_down' => 'integer',
-        'rate_up'   => 'integer',
+        'rate_up' => 'integer',
     ];
 
     // -------------------------------------------------------------------------
@@ -53,8 +54,8 @@ class Bandwidth extends Model
     public function getRateLimitStringAttribute(): string
     {
         return $this->toRouterOsUnit($this->rate_up, $this->rate_up_unit)
-            . '/'
-            . $this->toRouterOsUnit($this->rate_down, $this->rate_down_unit);
+            .'/'
+            .$this->toRouterOsUnit($this->rate_down, $this->rate_down_unit);
     }
 
     // -------------------------------------------------------------------------
@@ -83,11 +84,11 @@ class Bandwidth extends Model
             'Mbps' => 'M',
             'Kbps' => 'K',
             'Gbps' => 'G',
-            'Bps'  => '',
+            'Bps' => '',
         ];
 
         $suffix = $map[trim($unit)] ?? trim($unit);
 
-        return $rate . $suffix;
+        return $rate.$suffix;
     }
 }

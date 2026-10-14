@@ -3,27 +3,54 @@
 namespace App\Livewire\Billing;
 
 use App\Models\Transaction;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Transactions extends Component
 {
     use WithPagination;
 
     public string $search = '';
+
     public string $typeFilter = '';
+
     public string $methodFilter = '';
+
     public string $dateFrom = '';
+
     public string $dateTo = '';
+
     public string $sortBy = 'created_at';
+
     public string $sortDirection = 'desc';
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedTypeFilter(): void { $this->resetPage(); }
-    public function updatedMethodFilter(): void { $this->resetPage(); }
-    public function updatedDateFrom(): void { $this->resetPage(); }
-    public function updatedDateTo(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMethodFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateTo(): void
+    {
+        $this->resetPage();
+    }
 
     public function sort(string $col): void
     {
@@ -41,8 +68,8 @@ class Transactions extends Component
         return Transaction::with(['customer', 'paymentTransaction.coupon'])
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('invoice', 'like', "%{$this->search}%")
-                  ->orWhere('username', 'like', "%{$this->search}%")
-                  ->orWhere('plan_name', 'like', "%{$this->search}%");
+                    ->orWhere('username', 'like', "%{$this->search}%")
+                    ->orWhere('plan_name', 'like', "%{$this->search}%");
             }))
             ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
             ->when($this->methodFilter, fn ($q) => $q->where('method', $this->methodFilter))
@@ -58,7 +85,7 @@ class Transactions extends Component
         $query = Transaction::query()
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('invoice', 'like', "%{$this->search}%")
-                  ->orWhere('username', 'like', "%{$this->search}%");
+                    ->orWhere('username', 'like', "%{$this->search}%");
             }))
             ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
             ->when($this->methodFilter, fn ($q) => $q->where('method', $this->methodFilter))
@@ -66,12 +93,12 @@ class Transactions extends Component
             ->when($this->dateTo, fn ($q) => $q->whereDate('created_at', '<=', $this->dateTo));
 
         return [
-            'count'   => $query->count(),
+            'count' => $query->count(),
             'revenue' => (float) $query->sum('price'),
         ];
     }
 
-    public function exportCsv(): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function exportCsv(): StreamedResponse
     {
         $rows = Transaction::with(['customer', 'paymentTransaction.coupon'])
             ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
@@ -81,7 +108,7 @@ class Transactions extends Component
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $filename = 'transactions-' . now()->format('Y-m-d') . '.csv';
+        $filename = 'transactions-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($rows): void {
             $handle = fopen('php://output', 'w');
@@ -105,7 +132,7 @@ class Transactions extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.billing.transactions');
     }

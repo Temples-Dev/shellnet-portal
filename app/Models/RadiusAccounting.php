@@ -33,10 +33,10 @@ class RadiusAccounting extends Model
     ];
 
     protected $casts = [
-        'session_time'  => 'integer',
-        'input_octets'  => 'integer',
+        'session_time' => 'integer',
+        'input_octets' => 'integer',
         'output_octets' => 'integer',
-        'created_at'    => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     // ---------------------------------------------------------------------------
@@ -64,9 +64,9 @@ class RadiusAccounting extends Model
             return '0s';
         }
 
-        $hours   = intdiv($seconds, 3600);
+        $hours = intdiv($seconds, 3600);
         $minutes = intdiv($seconds % 3600, 60);
-        $secs    = $seconds % 60;
+        $secs = $seconds % 60;
 
         $parts = [];
 

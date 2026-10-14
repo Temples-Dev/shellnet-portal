@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,20 +13,34 @@ class Staff extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $roleFilter = '';
 
     public string $fName = '';
+
     public string $fEmail = '';
+
     public string $fPassword = '';
+
     public string $fUserType = 'Agent';
+
     public string $fStatus = 'Active';
 
     public ?int $editingId = null;
+
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedRoleFilter(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedRoleFilter(): void
+    {
+        $this->resetPage();
+    }
 
     #[Computed]
     public function staff()
@@ -49,12 +64,12 @@ class Staff extends Component
     public function openEdit(int $id): void
     {
         $user = User::findOrFail($id);
-        $this->editingId  = $id;
-        $this->fName      = $user->name;
-        $this->fEmail     = $user->email;
-        $this->fPassword  = '';
-        $this->fUserType  = $user->user_type ?? 'Agent';
-        $this->fStatus    = $user->status ?? 'Active';
+        $this->editingId = $id;
+        $this->fName = $user->name;
+        $this->fEmail = $user->email;
+        $this->fPassword = '';
+        $this->fUserType = $user->user_type ?? 'Agent';
+        $this->fStatus = $user->status ?? 'Active';
         $this->resetErrorBag();
         $this->modal('staff-form')->show();
     }
@@ -62,10 +77,10 @@ class Staff extends Component
     public function save(): void
     {
         $rules = [
-            'fName'     => 'required|string|max:128',
-            'fEmail'    => 'required|email|unique:users,email' . ($this->editingId ? ",{$this->editingId}" : ''),
-            'fUserType' => 'required|in:' . implode(',', User::USER_TYPES),
-            'fStatus'   => 'required|in:' . implode(',', User::STATUSES),
+            'fName' => 'required|string|max:128',
+            'fEmail' => 'required|email|unique:users,email'.($this->editingId ? ",{$this->editingId}" : ''),
+            'fUserType' => 'required|in:'.implode(',', User::USER_TYPES),
+            'fStatus' => 'required|in:'.implode(',', User::STATUSES),
         ];
 
         if (! $this->editingId) {
@@ -75,10 +90,10 @@ class Staff extends Component
         $this->validate($rules);
 
         $data = [
-            'name'      => $this->fName,
-            'email'     => $this->fEmail,
+            'name' => $this->fName,
+            'email' => $this->fEmail,
             'user_type' => $this->fUserType,
-            'status'    => $this->fStatus,
+            'status' => $this->fStatus,
         ];
 
         if ($this->fPassword !== '') {
@@ -90,6 +105,7 @@ class Staff extends Component
             $target = User::findOrFail($this->editingId);
             if ($target->isSuperAdmin() && ! auth()->user()->isSuperAdmin()) {
                 $this->addError('fUserType', 'Only a SuperAdmin can modify another SuperAdmin.');
+
                 return;
             }
             $target->update($data);
@@ -108,7 +124,7 @@ class Staff extends Component
             return; // Can't delete yourself
         }
         $user = User::findOrFail($id);
-        $this->deletingId   = $id;
+        $this->deletingId = $id;
         $this->deletingName = $user->name;
         $this->modal('staff-delete')->show();
     }
@@ -124,14 +140,14 @@ class Staff extends Component
 
     private function resetForm(): void
     {
-        $this->fName     = '';
-        $this->fEmail    = '';
+        $this->fName = '';
+        $this->fEmail = '';
         $this->fPassword = '';
         $this->fUserType = 'Agent';
-        $this->fStatus   = 'Active';
+        $this->fStatus = 'Active';
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.admin.staff');
     }

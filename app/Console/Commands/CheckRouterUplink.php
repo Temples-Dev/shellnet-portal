@@ -20,6 +20,7 @@ class CheckRouterUplink extends Command
 
         if ($routers->isEmpty()) {
             $this->info('No enabled routers.');
+
             return self::SUCCESS;
         }
 
@@ -27,11 +28,11 @@ class CheckRouterUplink extends Command
             [$status, $reason] = $this->probe($router);
 
             $router->update([
-                'status'    => $status,
+                'status' => $status,
                 'last_seen' => $status === 'Online' ? now() : $router->last_seen,
             ]);
 
-            $icon   = $status === 'Online' ? '✓' : '✗';
+            $icon = $status === 'Online' ? '✓' : '✗';
             $method = $status === 'Online' ? 'info' : 'warn';
             $this->$method("{$icon} [{$router->name}] {$status} — {$reason}");
         }
@@ -46,9 +47,10 @@ class CheckRouterUplink extends Command
         } catch (\Throwable $e) {
             Log::info('[CheckRouterUplink] Cannot reach router', [
                 'router' => $router->name,
-                'error'  => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
-            return ['Offline', 'API unreachable: ' . $e->getMessage()];
+
+            return ['Offline', 'API unreachable: '.$e->getMessage()];
         }
 
         // Router is reachable. Now verify internet uplink via active default route.
@@ -56,8 +58,9 @@ class CheckRouterUplink extends Command
             $routes = $client->query('/ip/route/print')->read();
 
             $hasActiveDefault = collect($routes)->contains(function (array $r): bool {
-                $dst    = $r['dst-address'] ?? '';
+                $dst = $r['dst-address'] ?? '';
                 $active = $r['active'] ?? 'false';
+
                 return $dst === '0.0.0.0/0' && $active === 'true';
             });
 
@@ -70,8 +73,9 @@ class CheckRouterUplink extends Command
             // API connection worked but route query failed — still mark online
             Log::debug('[CheckRouterUplink] Route query failed', [
                 'router' => $router->name,
-                'error'  => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
+
             return ['Online', 'API ok (route check skipped)'];
         }
     }

@@ -17,27 +17,27 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('customer_id')
-                  ->constrained('customers')
-                  ->cascadeOnDelete();
+                ->constrained('customers')
+                ->cascadeOnDelete();
 
             $table->foreignId('plan_id')
-                  ->nullable()
-                  ->constrained('plans')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('plans')
+                ->nullOnDelete();
 
             // Snapshot of the plan name at the time of recharge
             $table->string('plan_name', 40);
 
             $table->foreignId('router_id')
-                  ->nullable()
-                  ->constrained('routers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('routers')
+                ->nullOnDelete();
 
             // Snapshot of the router name at the time of recharge
             $table->string('router_name', 32)->nullable();
 
             $table->enum('type', ['Hotspot', 'PPPoE', 'VPN', 'Balance'])
-                  ->default('Hotspot');
+                ->default('Hotspot');
 
             $table->string('method', 128)->nullable();
 
@@ -47,9 +47,9 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
 
             $table->foreignId('admin_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
 

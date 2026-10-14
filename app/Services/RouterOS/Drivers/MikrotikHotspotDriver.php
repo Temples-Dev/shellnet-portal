@@ -19,7 +19,7 @@ class MikrotikHotspotDriver implements DeviceDriverInterface
     public function addUser(Subscription $subscription): void
     {
         $customer = $subscription->customer;
-        $plan     = $subscription->plan;
+        $plan = $subscription->plan;
         $username = $customer->username;
         $password = $customer->pppoe_password ?? $customer->username;
 
@@ -32,7 +32,7 @@ class MikrotikHotspotDriver implements DeviceDriverInterface
             ->equal('name', $username)
             ->equal('password', $password)
             ->equal('profile', $subscription->plan_name)
-            ->equal('comment', 'sub:' . $subscription->id);
+            ->equal('comment', 'sub:'.$subscription->id);
 
         // Bind to MAC address when set — prevents credential sharing
         if ($customer->mac_address) {
@@ -93,7 +93,7 @@ class MikrotikHotspotDriver implements DeviceDriverInterface
     private function formatUptime(int $limit, string $unit): string
     {
         $seconds = match ($unit) {
-            'Hrs'  => $limit * 3600,
+            'Hrs' => $limit * 3600,
             'Mins' => $limit * 60,
             default => $limit * 60,
         };
@@ -110,8 +110,8 @@ class MikrotikHotspotDriver implements DeviceDriverInterface
     private function formatBytes(int $limit, string $unit): string
     {
         $bytes = match ($unit) {
-            'GB'   => $limit * 1073741824,
-            'MB'   => $limit * 1048576,
+            'GB' => $limit * 1073741824,
+            'MB' => $limit * 1048576,
             default => $limit * 1048576,
         };
 

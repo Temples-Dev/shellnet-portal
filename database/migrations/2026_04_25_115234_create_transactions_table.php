@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('invoice', 25)->unique();
 
             $table->foreignId('customer_id')
-                  ->nullable()
-                  ->constrained('customers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('customers')
+                ->nullOnDelete();
 
             // Snapshot of the customer username at the time of the transaction
             $table->string('username', 32);
@@ -32,14 +32,14 @@ return new class extends Migration
             $table->decimal('price', 15, 2);
 
             $table->enum('type', ['Hotspot', 'PPPoE', 'VPN', 'Balance'])
-                  ->default('Hotspot');
+                ->default('Hotspot');
 
             $table->string('method', 128)->nullable();
 
             $table->foreignId('router_id')
-                  ->nullable()
-                  ->constrained('routers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('routers')
+                ->nullOnDelete();
 
             // Snapshot of the router name at the time of the transaction
             $table->string('router_name', 32)->nullable();
@@ -47,9 +47,9 @@ return new class extends Migration
             $table->string('note', 256)->nullable();
 
             $table->foreignId('admin_id')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamp('recharged_at')->nullable();
             $table->timestamp('expires_at')->nullable();

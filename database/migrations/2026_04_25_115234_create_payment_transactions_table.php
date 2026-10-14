@@ -18,9 +18,9 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('customer_id')
-                  ->nullable()
-                  ->constrained('customers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('customers')
+                ->nullOnDelete();
 
             $table->string('username', 32);
 
@@ -31,17 +31,17 @@ return new class extends Migration
             $table->string('gateway_trx_id', 512)->nullable();
 
             $table->foreignId('plan_id')
-                  ->nullable()
-                  ->constrained('plans')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('plans')
+                ->nullOnDelete();
 
             // Snapshot of the plan name at the time of payment initiation
             $table->string('plan_name', 40);
 
             $table->foreignId('router_id')
-                  ->nullable()
-                  ->constrained('routers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('routers')
+                ->nullOnDelete();
 
             // Snapshot of the router name at the time of payment initiation
             $table->string('router_name', 32)->nullable();

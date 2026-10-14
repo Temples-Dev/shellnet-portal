@@ -3,6 +3,7 @@
 namespace App\Livewire\Network;
 
 use App\Models\Router;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,24 +13,39 @@ class Routers extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $statusFilter = '';
 
     // Shared form fields
     public string $fName = '';
+
     public string $fIpAddress = '';
+
     public string $fUsername = 'admin';
+
     public string $fPassword = '';
+
     public string $fDescription = '';
-    public bool   $fEnabled = true;
+
+    public bool $fEnabled = true;
 
     public ?int $editingId = null;
+
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
     public array $pingResults = [];
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedStatusFilter(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter(): void
+    {
+        $this->resetPage();
+    }
 
     #[Computed]
     public function routers()
@@ -57,13 +73,13 @@ class Routers extends Component
     public function openEdit(int $id): void
     {
         $r = Router::findOrFail($id);
-        $this->editingId    = $id;
-        $this->fName        = $r->name;
-        $this->fIpAddress   = $r->ip_address;
-        $this->fUsername    = $r->username;
-        $this->fPassword    = '';
+        $this->editingId = $id;
+        $this->fName = $r->name;
+        $this->fIpAddress = $r->ip_address;
+        $this->fUsername = $r->username;
+        $this->fPassword = '';
         $this->fDescription = $r->description ?? '';
-        $this->fEnabled     = (bool) $r->enabled;
+        $this->fEnabled = (bool) $r->enabled;
         $this->resetErrorBag();
         $this->modal('router-form')->show();
     }
@@ -71,9 +87,9 @@ class Routers extends Component
     public function save(): void
     {
         $rules = [
-            'fName'      => 'required|string|max:64|unique:routers,name' . ($this->editingId ? ",{$this->editingId}" : ''),
+            'fName' => 'required|string|max:64|unique:routers,name'.($this->editingId ? ",{$this->editingId}" : ''),
             'fIpAddress' => 'required|string|max:64',
-            'fUsername'  => 'required|string|max:64',
+            'fUsername' => 'required|string|max:64',
         ];
 
         if (! $this->editingId) {
@@ -83,11 +99,11 @@ class Routers extends Component
         $this->validate($rules);
 
         $data = [
-            'name'        => $this->fName,
-            'ip_address'  => $this->fIpAddress,
-            'username'    => $this->fUsername,
+            'name' => $this->fName,
+            'ip_address' => $this->fIpAddress,
+            'username' => $this->fUsername,
             'description' => $this->fDescription ?: null,
-            'enabled'     => $this->fEnabled,
+            'enabled' => $this->fEnabled,
         ];
 
         if ($this->fPassword !== '') {
@@ -112,7 +128,7 @@ class Routers extends Component
     public function confirmDelete(int $id): void
     {
         $r = Router::findOrFail($id);
-        $this->deletingId   = $id;
+        $this->deletingId = $id;
         $this->deletingName = $r->name;
         $this->modal('delete-router')->show();
     }
@@ -122,7 +138,7 @@ class Routers extends Component
         if ($this->deletingId) {
             Router::findOrFail($this->deletingId)->delete();
         }
-        $this->deletingId   = null;
+        $this->deletingId = null;
         $this->deletingName = '';
         $this->modal('delete-router')->close();
     }
@@ -144,13 +160,13 @@ class Routers extends Component
     public function ping(int $id): void
     {
         $router = Router::findOrFail($id);
-        $ip     = $router->clean_ip;
+        $ip = $router->clean_ip;
 
         $alive = $this->icmpPing($ip);
 
         $status = $alive ? 'Online' : 'Offline';
         $router->update([
-            'status'    => $status,
+            'status' => $status,
             'last_seen' => $alive ? now() : $router->last_seen,
         ]);
 
@@ -166,7 +182,7 @@ class Routers extends Component
         ];
 
         // argv array — no shell involved, immune to injection
-        $cmd     = ['ping', '-c', '1', '-W', '2', $ip];
+        $cmd = ['ping', '-c', '1', '-W', '2', $ip];
         $process = proc_open($cmd, $descriptors, $pipes);
 
         if (! is_resource($process)) {
@@ -186,15 +202,15 @@ class Routers extends Component
 
     private function resetForm(): void
     {
-        $this->fName        = '';
-        $this->fIpAddress   = '';
-        $this->fUsername    = 'admin';
-        $this->fPassword    = '';
+        $this->fName = '';
+        $this->fIpAddress = '';
+        $this->fUsername = 'admin';
+        $this->fPassword = '';
         $this->fDescription = '';
-        $this->fEnabled     = true;
+        $this->fEnabled = true;
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.network.routers');
     }

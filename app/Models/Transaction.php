@@ -39,9 +39,9 @@ class Transaction extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'price'        => 'decimal:2',
+        'price' => 'decimal:2',
         'recharged_at' => 'datetime',
-        'expires_at'   => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     // -------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class Transaction extends Model
 
         static::creating(function (self $transaction): void {
             if (empty($transaction->invoice)) {
-                $transaction->invoice = substr('INV' . strtoupper(uniqid()), 0, 25);
+                $transaction->invoice = substr('INV'.strtoupper(uniqid()), 0, 25);
             }
         });
     }

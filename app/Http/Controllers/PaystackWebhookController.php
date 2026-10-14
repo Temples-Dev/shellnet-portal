@@ -14,22 +14,23 @@ use Illuminate\Support\Facades\Log;
 class PaystackWebhookController extends Controller
 {
     public function __construct(
-        private readonly PaystackService     $paystack,
-        private readonly AssignSubscription  $assignSubscription,
+        private readonly PaystackService $paystack,
+        private readonly AssignSubscription $assignSubscription,
     ) {}
 
     public function __invoke(Request $request): Response
     {
-        $payload   = $request->getContent();
+        $payload = $request->getContent();
         $signature = $request->header('X-Paystack-Signature', '');
 
         if (! $this->paystack->validateWebhookSignature($payload, $signature)) {
             Log::warning('[PaystackWebhook] Invalid signature');
+
             return response('Unauthorized', 401);
         }
 
         $event = $request->json('event');
-        $data  = $request->json('data', []);
+        $data = $request->json('data', []);
 
         if ($event === 'charge.success') {
             $this->handleChargeSuccess($data);
@@ -41,9 +42,11 @@ class PaystackWebhookController extends Controller
     private function handleChargeSuccess(array $data): void
     {
         $reference = $data['reference'] ?? null;
-        $meta      = $data['metadata'] ?? [];
+        $meta = $data['metadata'] ?? [];
 
-        if (! $reference) return;
+        if (! $reference) {
+            return;
+        }
 
         // Idempotency — skip if already processed
         if (PaymentTransaction::where('reference', $reference)->where('status', PaymentTransaction::STATUS_PAID)->exists()) {
@@ -51,18 +54,20 @@ class PaystackWebhookController extends Controller
         }
 
         $customerId = $meta['customer_id'] ?? null;
-        $planId     = $meta['plan_id'] ?? null;
+        $planId = $meta['plan_id'] ?? null;
 
         if (! $customerId || ! $planId) {
             Log::error('[PaystackWebhook] Missing metadata', ['reference' => $reference]);
+
             return;
         }
 
         $customer = Customer::find($customerId);
-        $plan     = Plan::find($planId);
+        $plan = Plan::find($planId);
 
         if (! $customer || ! $plan) {
             Log::error('[PaystackWebhook] Customer or plan not found', compact('customerId', 'planId'));
+
             return;
         }
 
@@ -72,24 +77,24 @@ class PaystackWebhookController extends Controller
             PaymentTransaction::updateOrCreate(
                 ['reference' => $reference],
                 [
-                    'customer_id'     => $customer->id,
-                    'username'        => $customer->username,
-                    'plan_id'         => $plan->id,
-                    'plan_name'       => $plan->name,
-                    'invoice'         => $subscription->transactions()->latest()->first()?->invoice,
-                    'price'           => ($data['amount'] ?? 0) / 100,
-                    'currency'        => $data['currency'] ?? 'NGN',
-                    'gateway'         => 'paystack',
-                    'payment_method'  => 'paystack',
-                    'status'          => PaymentTransaction::STATUS_PAID,
-                    'gateway_trx_id'  => (string) ($data['id'] ?? ''),
-                    'paid_at'         => now(),
+                    'customer_id' => $customer->id,
+                    'username' => $customer->username,
+                    'plan_id' => $plan->id,
+                    'plan_name' => $plan->name,
+                    'invoice' => $subscription->transactions()->latest()->first()?->invoice,
+                    'price' => ($data['amount'] ?? 0) / 100,
+                    'currency' => $data['currency'] ?? 'NGN',
+                    'gateway' => 'paystack',
+                    'payment_method' => 'paystack',
+                    'status' => PaymentTransaction::STATUS_PAID,
+                    'gateway_trx_id' => (string) ($data['id'] ?? ''),
+                    'paid_at' => now(),
                 ]
             );
         } catch (\Throwable $e) {
             Log::error('[PaystackWebhook] AssignSubscription failed', [
                 'reference' => $reference,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }

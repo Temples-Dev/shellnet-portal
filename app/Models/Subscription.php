@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Subscription extends Model
 {
     use HasFactory;
+
     /**
      * Valid subscription statuses.
      */
@@ -41,7 +42,7 @@ class Subscription extends Model
      */
     protected $casts = [
         'recharged_at' => 'datetime',
-        'expires_at'   => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     // -------------------------------------------------------------------------
@@ -63,7 +64,7 @@ class Subscription extends Model
     public function scopeExpired(Builder $query): Builder
     {
         return $query->where('expires_at', '<=', now())
-                     ->where('status', 'on');
+            ->where('status', 'on');
     }
 
     // -------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PaystackCallbackController;
+use App\Http\Controllers\PaystackWebhookController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/portal.php';
@@ -11,12 +13,12 @@ Route::get('/', function () {
 })->name('home');
 
 // Paystack payment routes (no auth required for webhook; callback needs auth)
-Route::post('/payment/paystack/webhook', \App\Http\Controllers\PaystackWebhookController::class)
+Route::post('/payment/paystack/webhook', PaystackWebhookController::class)
     ->name('payment.paystack.webhook');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/payment/paystack/callback', \App\Http\Controllers\PaystackCallbackController::class)
+    Route::get('/payment/paystack/callback', PaystackCallbackController::class)
         ->name('payment.paystack.callback');
 
     Route::view('dashboard', 'dashboard')->name('dashboard');

@@ -23,6 +23,7 @@ class NotifyExpiringSubscriptions extends Command
 
         if ($expiring->isEmpty()) {
             $this->info("No subscriptions expiring within {$days} day(s).");
+
             return self::SUCCESS;
         }
 
@@ -37,6 +38,7 @@ class NotifyExpiringSubscriptions extends Command
         }
 
         $this->info("Notified {$expiring->count()} customer(s).");
+
         return self::SUCCESS;
     }
 }

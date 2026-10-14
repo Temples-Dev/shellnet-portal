@@ -20,12 +20,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(RouterOSManager::class);
 
-        $this->app->bind(AssignSubscription::class, fn ($app) =>
-            new AssignSubscription($app->make(RouterOSManager::class))
+        $this->app->bind(AssignSubscription::class, fn ($app) => new AssignSubscription($app->make(RouterOSManager::class))
         );
 
-        $this->app->bind(RevokeSubscription::class, fn ($app) =>
-            new RevokeSubscription($app->make(RouterOSManager::class))
+        $this->app->bind(RevokeSubscription::class, fn ($app) => new RevokeSubscription($app->make(RouterOSManager::class))
         );
     }
 

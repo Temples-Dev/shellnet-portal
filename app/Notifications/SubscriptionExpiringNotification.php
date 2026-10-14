@@ -24,12 +24,12 @@ class SubscriptionExpiringNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Your Plan Expires in {$this->daysLeft} Day(s) — " . config('app.name'))
-            ->greeting('Hello ' . $notifiable->fullname . ',')
+            ->subject("Your Plan Expires in {$this->daysLeft} Day(s) — ".config('app.name'))
+            ->greeting('Hello '.$notifiable->fullname.',')
             ->line("Your **{$this->subscription->plan_name}** plan expires in **{$this->daysLeft} day(s)**.")
-            ->line("**Expiry Date:** " . $this->subscription->expires_at?->format('d M Y'))
+            ->line('**Expiry Date:** '.$this->subscription->expires_at?->format('d M Y'))
             ->line('Please renew before it expires to avoid service interruption.')
             ->action('Renew Now', url('/'))
-            ->line('Thank you for being with ' . config('app.name') . '.');
+            ->line('Thank you for being with '.config('app.name').'.');
     }
 }

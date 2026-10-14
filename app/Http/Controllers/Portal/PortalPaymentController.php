@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\PaymentTransaction;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Services\Paystack\PaystackService;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 class PortalPaymentController extends Controller
 {
     public function __construct(
-        private readonly PaystackService    $paystack,
+        private readonly PaystackService $paystack,
         private readonly AssignSubscription $assignSubscription,
     ) {}
 
@@ -33,7 +34,7 @@ class PortalPaymentController extends Controller
         ]);
 
         // Enforce upgrade-only: block downgrade attempts
-        $active = \App\Models\Subscription::where('customer_id', $customer->id)
+        $active = Subscription::where('customer_id', $customer->id)
             ->where('status', 'on')
             ->latest()
             ->first();
@@ -48,10 +49,10 @@ class PortalPaymentController extends Controller
         }
 
         // Resolve coupon
-        $coupon         = null;
+        $coupon = null;
         $discountAmount = 0.0;
-        $originalPrice  = (float) $plan->price;
-        $finalPrice     = $originalPrice;
+        $originalPrice = (float) $plan->price;
+        $finalPrice = $originalPrice;
 
         if (! empty($data['coupon_code'])) {
             $coupon = Coupon::active()
@@ -60,12 +61,12 @@ class PortalPaymentController extends Controller
 
             if ($coupon && $coupon->is_valid) {
                 $lockedToOther = $coupon->customer_id && $coupon->customer_id !== $customer->id;
-                $meetsMinimum  = $coupon->min_order_amount === null
+                $meetsMinimum = $coupon->min_order_amount === null
                     || $originalPrice >= (float) $coupon->min_order_amount;
 
                 if (! $lockedToOther && $meetsMinimum) {
                     $discountAmount = $coupon->calculateDiscount($originalPrice);
-                    $finalPrice     = max(0.01, $originalPrice - $discountAmount);
+                    $finalPrice = max(0.01, $originalPrice - $discountAmount);
                 }
             }
         }
@@ -90,35 +91,36 @@ class PortalPaymentController extends Controller
                 null,
                 $finalPrice,
                 [
-                    'coupon_id'       => $coupon?->id,
+                    'coupon_id' => $coupon?->id,
                     'discount_amount' => $discountAmount,
-                    'original_price'  => $originalPrice,
+                    'original_price' => $originalPrice,
                 ],
             );
 
             // Create a pending payment record immediately so the customer has history
             // and so we can auto-fail if they abandon the payment
             PaymentTransaction::create([
-                'customer_id'     => $customer->id,
-                'username'        => $customer->username,
-                'plan_id'         => $plan->id,
-                'plan_name'       => $plan->name,
-                'reference'       => $result['reference'],
-                'gateway'         => 'paystack',
-                'payment_method'  => 'paystack',
-                'price'           => $finalPrice,
-                'original_price'  => $originalPrice,
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_id' => $plan->id,
+                'plan_name' => $plan->name,
+                'reference' => $result['reference'],
+                'gateway' => 'paystack',
+                'payment_method' => 'paystack',
+                'price' => $finalPrice,
+                'original_price' => $originalPrice,
                 'discount_amount' => $discountAmount,
-                'coupon_id'       => $coupon?->id,
-                'currency'        => config('services.paystack.currency', 'GHS'),
-                'status'          => PaymentTransaction::STATUS_UNPAID,
-                'pg_url'          => $result['authorization_url'],
-                'expired_at'      => now()->addMinutes(20),
+                'coupon_id' => $coupon?->id,
+                'currency' => config('services.paystack.currency', 'GHS'),
+                'status' => PaymentTransaction::STATUS_UNPAID,
+                'pg_url' => $result['authorization_url'],
+                'expired_at' => now()->addMinutes(20),
             ]);
 
             return redirect()->away($result['authorization_url']);
         } catch (\Throwable $e) {
             Log::error('[PortalPayment] Init failed', ['error' => $e->getMessage()]);
+
             return back()->withErrors(['payment' => 'Could not initiate payment. Please try again.']);
         }
     }
@@ -145,6 +147,7 @@ class PortalPaymentController extends Controller
             if (! $alreadyProcessed) {
                 $this->processPayment($transaction->reference, $data);
             }
+
             return redirect()->route('portal.success');
         } catch (\Throwable $e) {
             // Paystack confirms not paid — fall through to create a new session
@@ -170,33 +173,34 @@ class PortalPaymentController extends Controller
                 null,
                 (float) $transaction->price,
                 [
-                    'coupon_id'       => $transaction->coupon_id,
+                    'coupon_id' => $transaction->coupon_id,
                     'discount_amount' => (float) $transaction->discount_amount,
-                    'original_price'  => (float) $transaction->original_price,
+                    'original_price' => (float) $transaction->original_price,
                 ],
             );
 
             PaymentTransaction::create([
-                'customer_id'     => $customer->id,
-                'username'        => $customer->username,
-                'plan_id'         => $plan->id,
-                'plan_name'       => $plan->name,
-                'reference'       => $result['reference'],
-                'gateway'         => 'paystack',
-                'payment_method'  => 'paystack',
-                'price'           => (float) $transaction->price,
-                'original_price'  => (float) $transaction->original_price,
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_id' => $plan->id,
+                'plan_name' => $plan->name,
+                'reference' => $result['reference'],
+                'gateway' => 'paystack',
+                'payment_method' => 'paystack',
+                'price' => (float) $transaction->price,
+                'original_price' => (float) $transaction->original_price,
                 'discount_amount' => (float) $transaction->discount_amount,
-                'coupon_id'       => $transaction->coupon_id,
-                'currency'        => $transaction->currency ?? config('services.paystack.currency', 'GHS'),
-                'status'          => PaymentTransaction::STATUS_UNPAID,
-                'pg_url'          => $result['authorization_url'],
-                'expired_at'      => now()->addMinutes(20),
+                'coupon_id' => $transaction->coupon_id,
+                'currency' => $transaction->currency ?? config('services.paystack.currency', 'GHS'),
+                'status' => PaymentTransaction::STATUS_UNPAID,
+                'pg_url' => $result['authorization_url'],
+                'expired_at' => now()->addMinutes(20),
             ]);
 
             return redirect()->away($result['authorization_url']);
         } catch (\Throwable $e) {
             Log::error('[PortalPayment] Retry failed', ['transaction' => $transaction->id, 'error' => $e->getMessage()]);
+
             return back()->withErrors(['payment' => 'Could not initiate retry. Please try again.']);
         }
     }
@@ -240,8 +244,9 @@ class PortalPaymentController extends Controller
             } catch (\Throwable $e) {
                 Log::error('[PortalPayment] processPayment failed in resume', [
                     'reference' => $transaction->reference,
-                    'error'     => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
+
                 return redirect()->route('portal.account')
                     ->with('portal_processing', true);
             }
@@ -285,8 +290,9 @@ class PortalPaymentController extends Controller
             } catch (\Throwable $e) {
                 Log::error('[PortalPayment] processPayment failed after confirmed payment', [
                     'reference' => $reference,
-                    'error'     => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
+
                 return redirect()->route('portal.account')
                     ->with('portal_processing', true);
             }
@@ -297,58 +303,59 @@ class PortalPaymentController extends Controller
 
     private function processPayment(string $reference, array $data): void
     {
-        $meta       = $data['metadata'] ?? [];
+        $meta = $data['metadata'] ?? [];
         $customerId = $meta['customer_id'] ?? null;
-        $planId     = $meta['plan_id'] ?? null;
+        $planId = $meta['plan_id'] ?? null;
 
         // Fall back to the pending record if metadata is missing
         if (! $customerId || ! $planId) {
             $pending = PaymentTransaction::where('reference', $reference)->first();
             $customerId = $customerId ?? $pending?->customer_id;
-            $planId     = $planId ?? $pending?->plan_id;
+            $planId = $planId ?? $pending?->plan_id;
         }
 
         $customer = Customer::find($customerId);
-        $plan     = Plan::find($planId);
+        $plan = Plan::find($planId);
 
         if (! $customer || ! $plan) {
             Log::error('[PortalPayment] Customer or plan not found in callback', compact('customerId', 'planId'));
+
             return;
         }
 
         $subscription = $this->assignSubscription->execute($customer, $plan, 'paystack');
 
-        $couponId       = $meta['coupon_id'] ?? null;
+        $couponId = $meta['coupon_id'] ?? null;
         $discountAmount = (float) ($meta['discount_amount'] ?? 0);
-        $originalPrice  = (float) ($meta['original_price'] ?? ($data['amount'] ?? 0) / 100);
+        $originalPrice = (float) ($meta['original_price'] ?? ($data['amount'] ?? 0) / 100);
 
         // Fall back to the pending record values if Paystack metadata is missing
         $pending = PaymentTransaction::where('reference', $reference)->first();
         if ($pending) {
-            $couponId       = $couponId ?? $pending->coupon_id;
+            $couponId = $couponId ?? $pending->coupon_id;
             $discountAmount = $discountAmount ?: (float) $pending->discount_amount;
-            $originalPrice  = $originalPrice ?: (float) $pending->original_price;
+            $originalPrice = $originalPrice ?: (float) $pending->original_price;
         }
 
         PaymentTransaction::updateOrCreate(
             ['reference' => $reference],
             [
-                'customer_id'     => $customer->id,
-                'username'        => $customer->username,
-                'plan_id'         => $plan->id,
-                'plan_name'       => $plan->name,
-                'invoice'         => Transaction::where('customer_id', $customer->id)->latest()->value('invoice'),
-                'coupon_id'       => $couponId ?: null,
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_id' => $plan->id,
+                'plan_name' => $plan->name,
+                'invoice' => Transaction::where('customer_id', $customer->id)->latest()->value('invoice'),
+                'coupon_id' => $couponId ?: null,
                 'discount_amount' => $discountAmount,
-                'original_price'  => $originalPrice,
-                'price'           => ($data['amount'] ?? 0) / 100,
-                'currency'        => $data['currency'] ?? 'GHS',
-                'gateway'         => 'paystack',
-                'payment_method'  => 'paystack',
-                'status'          => PaymentTransaction::STATUS_PAID,
-                'gateway_trx_id'  => (string) ($data['id'] ?? ''),
-                'pg_url'          => null,
-                'paid_at'         => now(),
+                'original_price' => $originalPrice,
+                'price' => ($data['amount'] ?? 0) / 100,
+                'currency' => $data['currency'] ?? 'GHS',
+                'gateway' => 'paystack',
+                'payment_method' => 'paystack',
+                'status' => PaymentTransaction::STATUS_PAID,
+                'gateway_trx_id' => (string) ($data['id'] ?? ''),
+                'pg_url' => null,
+                'paid_at' => now(),
             ]
         );
 

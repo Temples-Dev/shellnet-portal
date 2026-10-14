@@ -15,15 +15,15 @@ class RouterFactory extends Factory
         $status = $this->faker->randomElement(['Online', 'Offline']);
 
         return [
-            'name'        => $this->faker->unique()->words(2, true),
-            'ip_address'  => $this->faker->localIpv4() . ':8728',
-            'username'    => 'admin',
-            'password'    => 'admin',
+            'name' => $this->faker->unique()->words(2, true),
+            'ip_address' => $this->faker->localIpv4().':8728',
+            'username' => 'admin',
+            'password' => 'admin',
             'description' => $this->faker->optional()->sentence(),
-            'coordinates' => $this->faker->latitude(-10, -1) . ',' . $this->faker->longitude(33, 42),
-            'status'      => $status,
-            'last_seen'   => $status === 'Online' ? now()->subMinutes(rand(1, 10)) : now()->subHours(rand(1, 48)),
-            'enabled'     => true,
+            'coordinates' => $this->faker->latitude(-10, -1).','.$this->faker->longitude(33, 42),
+            'status' => $status,
+            'last_seen' => $status === 'Online' ? now()->subMinutes(rand(1, 10)) : now()->subHours(rand(1, 48)),
+            'enabled' => true,
         ];
     }
 

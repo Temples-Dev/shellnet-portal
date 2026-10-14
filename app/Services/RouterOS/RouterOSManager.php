@@ -18,8 +18,8 @@ class RouterOSManager
      */
     public function driver(?Router $router, string $planType): DeviceDriverInterface
     {
-        if (!$router || !$router->enabled) {
-            return new DummyDriver();
+        if (! $router || ! $router->enabled) {
+            return new DummyDriver;
         }
 
         try {
@@ -29,13 +29,14 @@ class RouterOSManager
                 'router' => $router->name,
                 'error' => $e->getMessage(),
             ]);
-            return new DummyDriver();
+
+            return new DummyDriver;
         }
 
         return match ($planType) {
             'Hotspot' => new MikrotikHotspotDriver($client),
             'PPPoE' => new MikrotikPPPoEDriver($client),
-            default => new DummyDriver(),
+            default => new DummyDriver,
         };
     }
 }

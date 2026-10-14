@@ -14,12 +14,13 @@ class CustomerAuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'phone'    => ['required', 'string'],
+            'phone' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
         if (Auth::guard('customer')->attempt(['phone' => $credentials['phone'], 'password' => $credentials['password']], $request->boolean('remember'))) {
             $request->session()->regenerate();
+
             return redirect()->intended(route('portal.account'));
         }
 
@@ -30,24 +31,24 @@ class CustomerAuthController extends Controller
     {
         $data = $request->validate([
             'fullname' => ['required', 'string', 'max:100'],
-            'phone'    => ['required', 'string', 'max:20', 'unique:customers,phone'],
-            'email'    => ['nullable', 'email', 'max:100', 'unique:customers,email'],
+            'phone' => ['required', 'string', 'max:20', 'unique:customers,phone'],
+            'email' => ['nullable', 'email', 'max:100', 'unique:customers,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $username = $this->generateUsername($data['fullname']);
-        $plain    = $data['password'];
+        $plain = $data['password'];
 
         $customer = Customer::create([
-            'fullname'       => $data['fullname'],
-            'username'       => $username,
-            'phone'          => $data['phone'],
-            'email'          => $data['email'] ?? null,
-            'password'       => Hash::make($plain),
+            'fullname' => $data['fullname'],
+            'username' => $username,
+            'phone' => $data['phone'],
+            'email' => $data['email'] ?? null,
+            'password' => Hash::make($plain),
             'pppoe_password' => $plain,
-            'status'         => 'Active',
-            'service_type'   => 'Hotspot',
-            'account_type'   => 'Personal',
+            'status' => 'Active',
+            'service_type' => 'Hotspot',
+            'account_type' => 'Personal',
         ]);
 
         Auth::guard('customer')->login($customer);
@@ -61,6 +62,7 @@ class CustomerAuthController extends Controller
         Auth::guard('customer')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('portal.index');
     }
 
@@ -72,14 +74,14 @@ class CustomerAuthController extends Controller
         $slug = trim($slug, '.');
 
         if (empty($slug)) {
-            $slug = 'user' . substr(md5(uniqid()), 0, 6);
+            $slug = 'user'.substr(md5(uniqid()), 0, 6);
         }
 
-        $username = $slug . '@shellnet';
+        $username = $slug.'@shellnet';
         $i = 1;
 
         while (Customer::where('username', $username)->exists()) {
-            $username = $slug . $i . '@shellnet';
+            $username = $slug.$i.'@shellnet';
             $i++;
         }
 

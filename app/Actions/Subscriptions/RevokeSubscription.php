@@ -40,13 +40,13 @@ class RevokeSubscription
     {
         try {
             $router = $subscription->router;
-            $type   = $subscription->plan?->type ?? $subscription->type;
+            $type = $subscription->plan?->type ?? $subscription->type;
             $driver = $this->manager->driver($router, $type);
             $driver->removeUser($subscription);
         } catch (\Throwable $e) {
             Log::error('[RevokeSubscription] Router de-provisioning failed', [
                 'subscription' => $subscription->id,
-                'error'        => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }

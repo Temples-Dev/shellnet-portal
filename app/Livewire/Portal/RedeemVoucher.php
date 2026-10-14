@@ -5,6 +5,7 @@ namespace App\Livewire\Portal;
 use App\Actions\Subscriptions\AssignSubscription;
 use App\Models\Customer;
 use App\Models\Voucher;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
@@ -26,6 +27,7 @@ class RedeemVoucher extends Component
 
         if (! $voucher) {
             $this->addError('code', 'Invalid or already used voucher code.');
+
             return null;
         }
 
@@ -33,12 +35,14 @@ class RedeemVoucher extends Component
 
         if (! $plan || ! $plan->enabled) {
             $this->addError('code', 'This voucher is no longer valid.');
+
             return null;
         }
 
         // If voucher is locked to a specific customer, enforce it
         if ($voucher->customer_id && $voucher->customer_id !== $customer->id) {
             $this->addError('code', 'This voucher is not assigned to your account.');
+
             return null;
         }
 
@@ -46,9 +50,9 @@ class RedeemVoucher extends Component
             $assignSubscription->execute($customer, $plan, 'voucher');
 
             $voucher->update([
-                'status'      => 'used',
+                'status' => 'used',
                 'customer_id' => $customer->id,
-                'used_at'     => now(),
+                'used_at' => now(),
             ]);
 
             return redirect()->route('portal.success');
@@ -58,7 +62,7 @@ class RedeemVoucher extends Component
         }
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.portal.redeem-voucher');
     }

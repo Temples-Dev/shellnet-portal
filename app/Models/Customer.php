@@ -76,10 +76,10 @@ class Customer extends Authenticatable
     protected function casts(): array
     {
         return [
-            'balance'      => 'decimal:2',
+            'balance' => 'decimal:2',
             'auto_renewal' => 'boolean',
-            'created_at'   => 'datetime',
-            'updated_at'   => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 
@@ -106,13 +106,13 @@ class Customer extends Authenticatable
 
     public function scopeSearch(Builder $query, string $term): Builder
     {
-        $like = '%' . $term . '%';
+        $like = '%'.$term.'%';
 
         return $query->where(function (Builder $q) use ($like): void {
             $q->where('username', 'like', $like)
-              ->orWhere('fullname',  'like', $like)
-              ->orWhere('email',     'like', $like)
-              ->orWhere('phone',     'like', $like);
+                ->orWhere('fullname', 'like', $like)
+                ->orWhere('email', 'like', $like)
+                ->orWhere('phone', 'like', $like);
         });
     }
 
@@ -143,8 +143,8 @@ class Customer extends Authenticatable
     public function activeSubscription(): HasOne
     {
         return $this->hasOne(Subscription::class)
-                    ->where('status', 'on')
-                    ->latestOfMany('recharged_at');
+            ->where('status', 'on')
+            ->latestOfMany('recharged_at');
     }
 
     public function transactions(): HasMany

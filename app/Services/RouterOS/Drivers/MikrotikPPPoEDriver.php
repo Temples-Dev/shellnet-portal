@@ -32,7 +32,7 @@ class MikrotikPPPoEDriver implements DeviceDriverInterface
             ->equal('password', $password)
             ->equal('profile', $subscription->plan_name)
             ->equal('service', 'pppoe')
-            ->equal('comment', 'sub:' . $subscription->id);
+            ->equal('comment', 'sub:'.$subscription->id);
 
         // If customer has a static PPPoE IP, assign it
         if ($customer->pppoe_ip) {

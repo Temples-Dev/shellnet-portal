@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Router extends Model
 {
     use HasFactory;
+
     /**
      * Default RouterOS API port when none is embedded in ip_address.
      */
@@ -55,7 +56,7 @@ class Router extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'enabled'   => 'boolean',
+        'enabled' => 'boolean',
         'last_seen' => 'datetime',
     ];
 

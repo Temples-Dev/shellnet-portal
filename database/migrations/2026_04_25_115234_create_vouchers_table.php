@@ -21,28 +21,28 @@ return new class extends Migration
             $table->enum('type', ['Hotspot', 'PPPoE', 'VPN'])->default('Hotspot');
 
             $table->foreignId('plan_id')
-                  ->nullable()
-                  ->constrained('plans')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('plans')
+                ->nullOnDelete();
 
             $table->foreignId('router_id')
-                  ->nullable()
-                  ->constrained('routers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('routers')
+                ->nullOnDelete();
 
             // The customer who redeemed this voucher
             $table->foreignId('customer_id')
-                  ->nullable()
-                  ->constrained('customers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('customers')
+                ->nullOnDelete();
 
             $table->enum('status', ['unused', 'used', 'disabled'])->default('unused');
 
             // Admin or user who generated this voucher
             $table->foreignId('generated_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamp('used_at')->nullable();
 

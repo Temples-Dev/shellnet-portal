@@ -3,12 +3,14 @@
 namespace App\Livewire\Customers;
 
 use App\Models\Customer;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Map extends Component
 {
-    public string $statusFilter  = '';
+    public string $statusFilter = '';
+
     public string $serviceFilter = '';
 
     #[Computed]
@@ -17,7 +19,7 @@ class Map extends Component
         $customers = Customer::select('id', 'username', 'fullname', 'coordinates', 'status', 'service_type')
             ->whereNotNull('coordinates')
             ->where('coordinates', '!=', '')
-            ->when($this->statusFilter,  fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
             ->when($this->serviceFilter, fn ($q) => $q->where('service_type', $this->serviceFilter))
             ->get();
 
@@ -29,31 +31,31 @@ class Map extends Component
             }
 
             return [
-                'type'     => 'Feature',
+                'type' => 'Feature',
                 'geometry' => [
-                    'type'        => 'Point',
+                    'type' => 'Point',
                     'coordinates' => [(float) $parts[1], (float) $parts[0]], // GeoJSON: [lng, lat]
                 ],
                 'properties' => [
-                    'id'           => $c->id,
-                    'username'     => $c->username,
-                    'fullname'     => $c->fullname,
-                    'status'       => $c->status,
+                    'id' => $c->id,
+                    'username' => $c->username,
+                    'fullname' => $c->fullname,
+                    'status' => $c->status,
                     'service_type' => $c->service_type ?? '',
-                    'color'        => match ($c->status) {
-                        'Active'    => '#10b981',
-                        'Inactive'  => '#71717a',
-                        'Banned'    => '#ef4444',
+                    'color' => match ($c->status) {
+                        'Active' => '#10b981',
+                        'Inactive' => '#71717a',
+                        'Banned' => '#ef4444',
                         'Suspended' => '#f59e0b',
-                        'Limited'   => '#3b82f6',
-                        default     => '#71717a',
+                        'Limited' => '#3b82f6',
+                        default => '#71717a',
                     },
                 ],
             ];
         })->filter()->values()->all();
 
         return [
-            'type'     => 'FeatureCollection',
+            'type' => 'FeatureCollection',
             'features' => $features,
         ];
     }
@@ -76,7 +78,7 @@ class Map extends Component
         $this->dispatch('map-data-updated', geoJson: $this->geoJson);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.customers.map');
     }

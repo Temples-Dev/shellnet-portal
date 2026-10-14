@@ -35,11 +35,10 @@ class Meta extends Model
     /**
      * Retrieve a meta value for the given morph type, ID, and key.
      *
-     * @param  string  $type     Fully-qualified class name or morph alias.
-     * @param  int     $id       Primary key of the owner model.
-     * @param  string  $key      Meta key to look up.
-     * @param  mixed   $default  Value to return when no record is found.
-     * @return mixed
+     * @param  string  $type  Fully-qualified class name or morph alias.
+     * @param  int  $id  Primary key of the owner model.
+     * @param  string  $key  Meta key to look up.
+     * @param  mixed  $default  Value to return when no record is found.
      */
     public static function getFor(string $type, int $id, string $key, mixed $default = null): mixed
     {
@@ -54,19 +53,18 @@ class Meta extends Model
     /**
      * Insert or update a meta value for the given morph type, ID, and key.
      *
-     * @param  string  $type   Fully-qualified class name or morph alias.
-     * @param  int     $id     Primary key of the owner model.
-     * @param  string  $key    Meta key to store.
-     * @param  mixed   $value  Value to persist.
-     * @return static
+     * @param  string  $type  Fully-qualified class name or morph alias.
+     * @param  int  $id  Primary key of the owner model.
+     * @param  string  $key  Meta key to store.
+     * @param  mixed  $value  Value to persist.
      */
     public static function setFor(string $type, int $id, string $key, mixed $value): static
     {
         return static::updateOrCreate(
             [
                 'metable_type' => $type,
-                'metable_id'   => $id,
-                'key'          => $key,
+                'metable_id' => $id,
+                'key' => $key,
             ],
             ['value' => $value]
         );

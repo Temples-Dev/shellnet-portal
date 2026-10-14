@@ -71,12 +71,12 @@ class Plan extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'price'      => 'decimal:2',
-        'price_old'  => 'decimal:2',
+        'price' => 'decimal:2',
+        'price_old' => 'decimal:2',
         'is_limited' => 'boolean',
-        'is_radius'  => 'boolean',
-        'enabled'    => 'boolean',
-        'prepaid'    => 'boolean',
+        'is_radius' => 'boolean',
+        'enabled' => 'boolean',
+        'prepaid' => 'boolean',
     ];
 
     // -------------------------------------------------------------------------

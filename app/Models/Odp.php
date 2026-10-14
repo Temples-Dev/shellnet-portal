@@ -16,9 +16,9 @@ class Odp extends Model
     ];
 
     protected $casts = [
-        'port_amount'  => 'integer',
-        'attenuation'  => 'float',
-        'coverage'     => 'integer',
+        'port_amount' => 'integer',
+        'attenuation' => 'float',
+        'coverage' => 'integer',
     ];
 
     /**

@@ -30,12 +30,11 @@ class ActivityLog extends Model
     /**
      * Record a new activity log entry.
      *
-     * @param  string       $type        A short category string (e.g. "login", "invoice").
-     * @param  string       $description Human-readable description of the activity.
-     * @param  int|null     $userId      ID of the acting user, if available.
-     * @param  string|null  $userType    Morph type of the acting user, if applicable.
-     * @param  string|null  $ip          IP address of the request origin.
-     * @return static
+     * @param  string  $type  A short category string (e.g. "login", "invoice").
+     * @param  string  $description  Human-readable description of the activity.
+     * @param  int|null  $userId  ID of the acting user, if available.
+     * @param  string|null  $userType  Morph type of the acting user, if applicable.
+     * @param  string|null  $ip  IP address of the request origin.
      */
     public static function record(
         string $type,
@@ -45,11 +44,11 @@ class ActivityLog extends Model
         ?string $ip = null
     ): static {
         return static::create([
-            'type'        => $type,
+            'type' => $type,
             'description' => $description,
-            'user_id'     => $userId,
-            'user_type'   => $userType,
-            'ip_address'  => $ip,
+            'user_id' => $userId,
+            'user_type' => $userType,
+            'ip_address' => $ip,
         ]);
     }
 }

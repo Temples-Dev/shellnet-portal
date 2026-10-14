@@ -21,6 +21,7 @@ class ExpireSubscriptions extends Command
 
         if ($expired->isEmpty()) {
             $this->info('No subscriptions to expire.');
+
             return self::SUCCESS;
         }
 

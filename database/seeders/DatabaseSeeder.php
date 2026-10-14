@@ -16,12 +16,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'name'  => 'Admin',
+            'name' => 'Admin',
             'email' => 'admin@shellnet.local',
         ]);
 
         $routers = Router::factory(3)->create([
-            'status'  => 'Online',
+            'status' => 'Online',
             'enabled' => true,
         ]);
 
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         ])->map(fn ($b) => Bandwidth::create([
             ...$b,
             'rate_down_unit' => 'Mbps',
-            'rate_up_unit'   => 'Mbps',
+            'rate_up_unit' => 'Mbps',
         ]));
 
         $plans = collect([
@@ -48,49 +48,49 @@ class DatabaseSeeder extends Seeder
         ])->map(fn ($p) => Plan::create([
             ...$p,
             'validity_unit' => 'Days',
-            'is_limited'    => false,
-            'limit_type'    => 'Time_Limit',
-            'shared_users'  => 1,
-            'is_radius'     => false,
-            'enabled'       => true,
-            'prepaid'       => true,
-            'plan_type'     => 'Personal',
-            'device'        => 'mikrotik',
+            'is_limited' => false,
+            'limit_type' => 'Time_Limit',
+            'shared_users' => 1,
+            'is_radius' => false,
+            'enabled' => true,
+            'prepaid' => true,
+            'plan_type' => 'Personal',
+            'device' => 'mikrotik',
         ]));
 
         $customers = Customer::factory(60)->active()->create();
 
         $customers->each(function (Customer $customer) use ($plans): void {
-            $plan        = $plans->random();
+            $plan = $plans->random();
             $rechargedAt = now()->subDays(rand(0, 25));
-            $expiresAt   = $rechargedAt->copy()->addDays($plan->validity);
+            $expiresAt = $rechargedAt->copy()->addDays($plan->validity);
 
             Subscription::create([
-                'customer_id'  => $customer->id,
-                'plan_id'      => $plan->id,
-                'plan_name'    => $plan->name,
-                'router_id'    => $plan->router_id,
-                'router_name'  => Router::find($plan->router_id)?->name ?? 'Router',
-                'type'         => $plan->type,
-                'method'       => collect(['cash', 'card', 'paystack'])->random(),
-                'status'       => $expiresAt->isFuture() ? 'on' : 'expired',
+                'customer_id' => $customer->id,
+                'plan_id' => $plan->id,
+                'plan_name' => $plan->name,
+                'router_id' => $plan->router_id,
+                'router_name' => Router::find($plan->router_id)?->name ?? 'Router',
+                'type' => $plan->type,
+                'method' => collect(['cash', 'card', 'paystack'])->random(),
+                'status' => $expiresAt->isFuture() ? 'on' : 'expired',
                 'recharged_at' => $rechargedAt,
-                'expires_at'   => $expiresAt,
+                'expires_at' => $expiresAt,
             ]);
 
             Transaction::create([
-                'customer_id'  => $customer->id,
-                'username'     => $customer->username,
-                'plan_name'    => $plan->name,
-                'price'        => $plan->price,
-                'type'         => $plan->type,
-                'method'       => collect(['cash', 'card', 'paystack'])->random(),
-                'router_id'    => $plan->router_id,
-                'router_name'  => Router::find($plan->router_id)?->name ?? 'Router',
+                'customer_id' => $customer->id,
+                'username' => $customer->username,
+                'plan_name' => $plan->name,
+                'price' => $plan->price,
+                'type' => $plan->type,
+                'method' => collect(['cash', 'card', 'paystack'])->random(),
+                'router_id' => $plan->router_id,
+                'router_name' => Router::find($plan->router_id)?->name ?? 'Router',
                 'recharged_at' => $rechargedAt,
-                'expires_at'   => $expiresAt,
-                'created_at'   => $rechargedAt,
-                'updated_at'   => $rechargedAt,
+                'expires_at' => $expiresAt,
+                'created_at' => $rechargedAt,
+                'updated_at' => $rechargedAt,
             ]);
         });
 
@@ -99,22 +99,22 @@ class DatabaseSeeder extends Seeder
             $count = rand(15, 40);
             for ($i = 0; $i < $count; $i++) {
                 $customer = $customers->random();
-                $plan     = $plans->random();
-                $date     = now()->subMonths($m)->setDay(rand(1, 28));
+                $plan = $plans->random();
+                $date = now()->subMonths($m)->setDay(rand(1, 28));
 
                 Transaction::create([
-                    'customer_id'  => $customer->id,
-                    'username'     => $customer->username,
-                    'plan_name'    => $plan->name,
-                    'price'        => $plan->price,
-                    'type'         => $plan->type,
-                    'method'       => collect(['cash', 'card', 'paystack'])->random(),
-                    'router_id'    => $plan->router_id,
-                    'router_name'  => Router::find($plan->router_id)?->name ?? 'Router',
+                    'customer_id' => $customer->id,
+                    'username' => $customer->username,
+                    'plan_name' => $plan->name,
+                    'price' => $plan->price,
+                    'type' => $plan->type,
+                    'method' => collect(['cash', 'card', 'paystack'])->random(),
+                    'router_id' => $plan->router_id,
+                    'router_name' => Router::find($plan->router_id)?->name ?? 'Router',
                     'recharged_at' => $date,
-                    'expires_at'   => $date->copy()->addDays($plan->validity),
-                    'created_at'   => $date,
-                    'updated_at'   => $date,
+                    'expires_at' => $date->copy()->addDays($plan->validity),
+                    'created_at' => $date,
+                    'updated_at' => $date,
                 ]);
             }
         }

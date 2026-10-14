@@ -34,11 +34,11 @@ class PaystackCallbackController extends Controller
         } catch (\Throwable $e) {
             Log::warning('[PaystackCallback] Verification failed', [
                 'reference' => $reference,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             return redirect()->route('billing.transactions')
-                ->with('error', 'Payment could not be verified: ' . $e->getMessage());
+                ->with('error', 'Payment could not be verified: '.$e->getMessage());
         }
     }
 }

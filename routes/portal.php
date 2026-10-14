@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Portal\CustomerAuthController;
 use App\Http\Controllers\Portal\PortalPaymentController;
+use App\Models\Plan;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('portal')->name('portal.')->group(function () {
@@ -25,8 +26,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('auth:customer')->group(function () {
         Route::get('/account', fn () => view('pages.portal.account'))->name('account');
         Route::get('/redeem', fn () => view('pages.portal.redeem'))->name('redeem');
-        Route::get('/checkout/{plan}', function (\App\Models\Plan $plan) {
+        Route::get('/checkout/{plan}', function (Plan $plan) {
             abort_if(! $plan->enabled, 404);
+
             return view('pages.portal.checkout', compact('plan'));
         })->name('checkout');
         Route::post('/checkout/{plan}/pay', [PortalPaymentController::class, 'pay'])->name('pay');
